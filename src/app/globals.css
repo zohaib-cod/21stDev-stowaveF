@@ -24,3 +24,79 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+
+
+/* Add this to your globals.css */
+/* 
+.fan-layout {
+  height: 38rem;
+}
+
+.fan-card {
+  position: absolute;
+  width: 18rem;
+  height: 24rem;
+  border-radius: 1.25rem;
+  overflow: hidden;
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.18);
+  will-change: transform;
+}
+
+@media (max-width: 1024px) {
+  .fan-layout { height: 34rem; }
+  .fan-card { width: 15rem; height: 20rem; }
+}
+
+@media (max-width: 768px) {
+  .fan-layout { height: 28rem; }
+  .fan-card { width: 12rem; height: 16rem; }
+}
+
+@media (max-width: 640px) {
+  .fan-layout { height: 26rem; }
+  .fan-card { width: 10rem; height: 13rem; }
+}
+
+@media (max-width: 480px) {
+  .fan-layout { height: 22rem; }
+  .fan-card { width: 8rem; height: 10rem; }
+} */
+
+
+
+/* Add this to your globals.css */
+
+html, body {
+  overflow-x: hidden;
+  width: 100%;
+  max-width: 100vw;
+  position: relative;
+}
+
+/* Wrap the whole page content (e.g. the outer <div> in page.jsx) in a class
+   called "page-clip" if the issue persists — see note below */
+.page-clip {
+  overflow-x: hidden;
+  width: 100%;
+  max-width: 100vw;
+  position: relative;
+}
+
+.fan-layout {
+  height: clamp(14rem, 45vw, 38rem);
+  width: 100%;
+  max-width: 100vw;
+  overflow: hidden;
+  position: relative;
+}
+
+.fan-card {
+  position: absolute;
+  width: clamp(6rem, 22vw, 18rem);
+  height: clamp(8rem, 29vw, 24rem);
+  border-radius: clamp(0.5rem, 1.5vw, 1.25rem);
+  overflow: hidden;
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.18);
+  will-change: transform;
+}
