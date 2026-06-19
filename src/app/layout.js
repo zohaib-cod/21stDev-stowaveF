@@ -45,8 +45,8 @@
 
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { AcmeHero } from "./components/navbar/page"; // Navbar layout path link
-import { Footer7 } from "./components/Footer/page";
+import  AcmeHero  from "./components/navbar/Navbar"; // Navbar layout path link
+import { Footer7 } from "./components/Footer/Footer";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -62,7 +62,7 @@ export default function RootLayout({ children }) {
         
         {/* 1. Global Fixed Layer Container — Yeh ab har page par bilkul top par layer karega */}
         <div className="fixed top-0 left-0 w-full z-50 pointer-events-auto">
-          <AcmeHero />
+          <AcmeHero/>
         </div>
 
         {/* 2. Page Content Render Area */}
