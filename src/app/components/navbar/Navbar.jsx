@@ -408,11 +408,11 @@ export default function AcmeHero() {
                   </button>
                   <nav className="flex flex-col space-y-4 pt-4">
                     <a href="/" className="text-sm text-muted-foreground/60 hover:text-foreground/80 transition-colors">Home</a>
-                    <a href="#" className="text-sm text-muted-foreground/60 hover:text-foreground/80 transition-colors">Regular Fitt</a>
-                    <a href="#" className="text-sm text-muted-foreground/60 hover:text-foreground/80 transition-colors">Oversized</a>
-                    <a href="#" className="text-sm text-muted-foreground/60 hover:text-foreground/80 transition-colors">SweatShirt</a>
+                    <a href="/regularFitt" className="text-sm text-muted-foreground/60 hover:text-foreground/80 transition-colors">Regular Fitt</a>
+                    <a href="/overSized" className="text-sm text-muted-foreground/60 hover:text-foreground/80 transition-colors">Oversized</a>
+                    <a href="/sweatShirt" className="text-sm text-muted-foreground/60 hover:text-foreground/80 transition-colors">SweatShirt</a>
                     <a href="/aboutUs" className="text-sm text-muted-foreground/60 hover:text-foreground/80 transition-colors">About Us</a>
-                    <a href="#" className="text-sm text-muted-foreground/60 hover:text-foreground/80 transition-colors">Contact Us</a>
+                    <a href="/contactUs" className="text-sm text-muted-foreground/60 hover:text-foreground/80 transition-colors">Contact Us</a>
                     <button className="text-left h-7 text-sm font-normal text-muted-foreground/60 hover:text-foreground/80 transition-colors">
                       Sign in
                     </button>
