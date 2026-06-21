@@ -27,43 +27,6 @@ body {
 
 
 
-/* Add this to your globals.css */
-/* 
-.fan-layout {
-  height: 38rem;
-}
-
-.fan-card {
-  position: absolute;
-  width: 18rem;
-  height: 24rem;
-  border-radius: 1.25rem;
-  overflow: hidden;
-  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.18);
-  will-change: transform;
-}
-
-@media (max-width: 1024px) {
-  .fan-layout { height: 34rem; }
-  .fan-card { width: 15rem; height: 20rem; }
-}
-
-@media (max-width: 768px) {
-  .fan-layout { height: 28rem; }
-  .fan-card { width: 12rem; height: 16rem; }
-}
-
-@media (max-width: 640px) {
-  .fan-layout { height: 26rem; }
-  .fan-card { width: 10rem; height: 13rem; }
-}
-
-@media (max-width: 480px) {
-  .fan-layout { height: 22rem; }
-  .fan-card { width: 8rem; height: 10rem; }
-} */
-
-
 
 /* Add this to your globals.css */
 
@@ -100,3 +63,31 @@ html, body {
   box-shadow: 0 10px 35px rgba(0, 0, 0, 0.18);
   will-change: transform;
 }
+
+
+/* 
+
+/* @import "tailwindcss"; */
+
+/* @theme inline {
+  --animate-marquee: marquee var(--duration) linear infinite;
+  --animate-marquee-vertical: marquee-vertical var(--duration) linear infinite;
+
+  @keyframes marquee {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(calc(-100% - var(--gap)));
+    }
+  }
+
+  @keyframes marquee-vertical {
+    from {
+      transform: translateY(0);
+    }
+    to {
+      transform: translateY(calc(-100% - var(--gap)));
+    }
+  }
+} */ 

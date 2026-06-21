@@ -284,6 +284,8 @@ import { Menu, Moon, Sun, X } from "lucide-react";
 import { HiOutlineShoppingBag } from "react-icons/hi2";
 import Link from "next/link";
 import Image from "next/image";
+import { BsPersonCircle } from "react-icons/bs";
+
 
 // 🟢 Next.js App Router compiler standard ke liye "export default" apply kar diya hai
 export default function AcmeHero() {
@@ -315,13 +317,13 @@ export default function AcmeHero() {
                 Home
               </a>
               <a
-                href="#"
+                href="/regularFitt"
                 className="text-sm text-muted-foreground/60 hover:text-foreground/80 transition-colors"
               >
                 Regular Fitt
               </a>
               <a
-                href="#"
+                href="/overSized"
                 className="text-sm text-muted-foreground/60 hover:text-foreground/80 transition-colors"
               >
                 Oversized
@@ -333,7 +335,7 @@ export default function AcmeHero() {
                 SweatShirt
               </a>
               <a
-                href="#"
+                href="/aboutUs"
                 className="text-sm text-muted-foreground/60 hover:text-foreground/80 transition-colors"
               >
                 About Us
@@ -350,16 +352,42 @@ export default function AcmeHero() {
             {/* Vertical Separator Line */}
             <div className="h-6 w-[1px] bg-border" />
             
-            <button
+            {/* <button
               className="hidden md:inline-flex h-7 px-2 items-center text-sm font-normal text-muted-foreground/60 hover:text-foreground/80 transition-colors"
             >
-              Sign in
+              Sign up
             </button>
             
             <button className="hidden md:inline-flex h-7 items-center rounded-full bg-foreground px-3 text-sm font-normal text-background hover:bg-foreground/90 transition-colors">
              Bag<HiOutlineShoppingBag /> 
             </button>
-            
+             */}
+ {/* <Link
+        href="/signUp"
+        className="hidden md:inline-flex h-7 px-2 items-center text-sm font-normal text-muted-foreground/60 hover:text-foreground/80 transition-colors"
+      >
+        <BsPersonCircle className="h-7" />
+      </Link> */}
+
+      <Link
+  href="/signUp"
+  className="hidden md:inline-flex h-10 px-2 items-center text-sm font-normal text-muted-foreground/60 hover:text-foreground/80 transition-colors"
+>
+  {/* h-8 aur w-8 dono lagane se icon perfectly bada ho jayega */}
+  <BsPersonCircle className="h-6 w-6" />
+</Link>
+
+ 
+      <Link
+        href="/bag"
+        className="hidden md:inline-flex h-7 items-center gap-1.5 rounded-full bg-foreground px-3 text-sm font-normal text-background hover:bg-foreground/90 transition-colors"
+      >
+        Bag <HiOutlineShoppingBag className="h-4 w-4" />
+      </Link>
+
+
+
+
             {/* Mobile Menu Button */}
             <button
               onClick={() => setIsOpen(true)}
@@ -383,13 +411,13 @@ export default function AcmeHero() {
                     <a href="#" className="text-sm text-muted-foreground/60 hover:text-foreground/80 transition-colors">Regular Fitt</a>
                     <a href="#" className="text-sm text-muted-foreground/60 hover:text-foreground/80 transition-colors">Oversized</a>
                     <a href="#" className="text-sm text-muted-foreground/60 hover:text-foreground/80 transition-colors">SweatShirt</a>
-                    <a href="#" className="text-sm text-muted-foreground/60 hover:text-foreground/80 transition-colors">About Us</a>
+                    <a href="/aboutUs" className="text-sm text-muted-foreground/60 hover:text-foreground/80 transition-colors">About Us</a>
                     <a href="#" className="text-sm text-muted-foreground/60 hover:text-foreground/80 transition-colors">Contact Us</a>
                     <button className="text-left h-7 text-sm font-normal text-muted-foreground/60 hover:text-foreground/80 transition-colors">
                       Sign in
                     </button>
-                    <button className="h-9 rounded-full bg-foreground px-3 text-sm font-normal text-background hover:bg-foreground/90 transition-colors">
-                      Bag<HiOutlineShoppingBag /> 
+                    <button className="h-9  rounded-full bg-foreground px-3 text-sm font-normal text-background hover:bg-foreground/90 transition-colors">
+                      Bag<HiOutlineShoppingBag className="inline"/> 
                     </button>
                   </nav>
                 </div>
@@ -401,3 +429,4 @@ export default function AcmeHero() {
     </div>
   );
 }
+// display:[inline-table] 

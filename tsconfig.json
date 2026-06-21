@@ -30,7 +30,7 @@
     "**/*.mts",
     "**/*.ts",
     "**/*.tsx"
-  ],
+, "src/app/components/aboutUs/aboutUs2part.jsx"  ],
   "exclude": [
     "node_modules"
   ]

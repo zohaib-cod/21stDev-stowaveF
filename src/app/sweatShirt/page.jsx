@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { motion } from "framer-motion";
+import { HeroSection } from "../components/slider/slider";
 
 // Local cn helper: Agar project mein shadcn ki utils file na chal rahi ho tab bhi error nahi aega
 const cn = (...classes) => classes.filter(Boolean).join(" ");
@@ -121,6 +122,13 @@ export default function SweatshirtPage() {
       isCouponPrice: false
     }
   ];
+  const heroSliderImages = [
+  { src: "/IMG_4623.PNG", alt: "Slide 1" },
+  { src: "/IMG_4632.PNG", alt: "Slide 2" },
+  { src: "/IMG_4824.PNG", alt: "Slide 3" },
+  { src: "/IMG_4909.PNG", alt: "Slide 4" },
+  { src: "/IMG_4916.PNG", alt: "Slide 5" },
+];
 
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 py-28 px-4 sm:px-6 lg:px-8">
@@ -145,6 +153,11 @@ export default function SweatshirtPage() {
           ))}
         </div>
       </div>
+      {/* <HeroSection
+        title="Crafted For Every Story"
+        subtitle="Discover pieces designed to move with you, wherever the day takes you."
+        images={heroSliderImages}
+      /> */}
     </div>
   );
 }
