@@ -367,15 +367,26 @@ function page() {
       </div>
 
       {/* Marquee ke andar elements daalna zaroori hai takay wo screen par show hon */}
-      <div className="w-full bg-gray-100 py-4 border-y border-gray-200">
+      {/* <div className="w-full bg-gray-100 py-4 border-y border-gray-200">
         <Marquee pauseOnHover className="[--duration:20s]">
-          <span className="text-2xl font-bold mx-8 text-neutral-800">🚀 Web Development</span>
-          <span className="text-2xl font-bold mx-8 text-neutral-800">✨ UI/UX Design</span>
-          <span className="text-2xl font-bold mx-8 text-neutral-800">📱 Mobile Apps</span>
-          <span className="text-2xl font-bold mx-8 text-neutral-800">💡 Brand Strategy</span>
-          <span className="text-2xl font-bold mx-8 text-neutral-800">🔍 SEO Optimization</span>
+          <span className="text-2xl font-bold mx-8 text-neutral-800">FREE SHIPPING ON ALL ORDERS OVER 5000</span>
+          <span className="text-2xl font-bold mx-8 text-neutral-800">FLAT 20 PERCENT OFF ON NEW ARRIVALS</span>
+          <span className="text-2xl font-bold mx-8 text-neutral-800">STREETWEAR SEASON DROPS ARE LIVE NOW</span>
+          <span className="text-2xl font-bold mx-8 text-neutral-800">BUY TWO GET ONE FREE SITEWIDE</span>
+          <span className="text-2xl font-bold mx-8 text-neutral-800">LIMITED STOCK AVAILABLE SHOP THE VIBE</span>
         </Marquee>
-      </div>
+      </div> */}
+<div className="w-full bg-gray-100 !py-1 border-y border-gray-200">
+  <Marquee pauseOnHover className="[--duration:20s] !p-0">
+    <span className="!text-[11px] font-medium tracking-widest mx-10 text-neutral-800 uppercase">FREE SHIPPING ON ALL ORDERS OVER 5000</span>
+    <span className="!text-[11px] font-medium tracking-widest mx-10 text-neutral-800 uppercase">FLAT 20 PERCENT OFF ON NEW ARRIVALS</span>
+    <span className="!text-[11px] font-medium tracking-widest mx-10 text-neutral-800 uppercase">STREETWEAR SEASON DROPS ARE LIVE NOW</span>
+    <span className="!text-[11px] font-medium tracking-widest mx-10 text-neutral-800 uppercase">BUY TWO GET ONE FREE SITEWIDE</span>
+    <span className="!text-[11px] font-medium tracking-widest mx-10 text-neutral-800 uppercase">LIMITED STOCK AVAILABLE SHOP THE VIBE</span>
+  </Marquee>
+</div>
+
+
 
       {/* Let's Connect CTA Section */}
       <div className="w-full py-16 px-4 flex flex-col items-center justify-center text-center bg-white">
