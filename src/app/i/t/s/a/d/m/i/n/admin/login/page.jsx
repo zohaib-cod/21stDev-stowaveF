@@ -21,6 +21,32 @@ export default function AdminLogin() {
       setError('Invalid username or password!');
     }
   };
+// app/i/t/s/a/d/m/i/n/admin/login/page.jsx k andar handleLogin function ko is se replace karein:
+// const handleLogin = async (e) => {
+//   e.preventDefault();
+//   setError('');
+  
+//   try {
+//     const response = await fetch('http://localhost:5000/api/admin/login', {
+//       method: 'POST',
+//       headers: { 'Content-Type': 'application/json' },
+//       body: JSON.stringify({ username, password })
+//     });
+
+//     const data = await response.json();
+
+//     if (data.success) {
+//       // Create session code lock open
+//       document.cookie = "stowave_admin_session=true; path=/; max-age=86400"; 
+//       router.push(basePath);
+//     } else {
+//       setError(data.message || 'Invalid username or password!');
+//     }
+//   } catch (err) {
+//     setError('Cannot connect to backend server. Ensure node server.js is running!');
+//   }
+// };
+
 
   return (
     <div className="fixed inset-0 min-h-screen flex items-center justify-center bg-slate-900 px-4 z-[9999]">

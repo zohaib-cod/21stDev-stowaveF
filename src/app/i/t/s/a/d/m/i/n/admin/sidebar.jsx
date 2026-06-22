@@ -323,6 +323,18 @@ const navigationItems = [
 
 export function Sidebar({ className = "" }) {
   const [isOpen, setIsOpen] = useState(false);
+  // Isko states k bilkul neechay copy-paste karein:
+const handleLogout = () => {
+  // 1. Cookie delete karna (Path define karna zaroori hai)
+  document.cookie = "stowave_admin_session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+  
+  // 2. Clear confirmation screen flash
+  alert("Logging out from Stowave Portal...");
+  
+  // 3. Force redirect to secure login route
+  window.location.href = "/i/t/s/a/d/m/i/n/admin/login";
+};
+
   const [isCollapsed, setIsCollapsed] = useState(false);
   const pathname = usePathname();
 
@@ -340,9 +352,9 @@ export function Sidebar({ className = "" }) {
   const toggleSidebar = () => setIsOpen(!isOpen);
   const toggleCollapse = () => setIsCollapsed(!isCollapsed);
 
-  const handleLogout = () => {
-    alert("Logging out from Stowave Portal..."); 
-  };
+//   const handleLogout = () => {
+//     alert("Logging out from Stowave Portal..."); 
+//   };
 
   return (
     <>
@@ -393,7 +405,7 @@ export function Sidebar({ className = "" }) {
           </button>
         </div>
 
-        {/* Search Bar */}
+               {/* Search Bar */}
         {!isCollapsed && (
           <div className="px-4 py-3">
             <div className="relative">
@@ -498,6 +510,7 @@ export function Sidebar({ className = "" }) {
                 Click to Logout
               </div>
             )}
+            
 
           </div>
         </div>
