@@ -16,72 +16,72 @@ export default function AdminSettings() {
     setStatus({ type: '', message: '' });
 
     // 1. Client-side validations
-    if (newPassword !== confirmPassword) {
-      setStatus({ type: 'error', message: 'New password and confirm password do not match!' });
-      return;
-    }
+  //   if (newPassword !== confirmPassword) {
+  //     setStatus({ type: 'error', message: 'New password and confirm password do not match!' });
+  //     return;
+  //   }
 
-    setLoading(true);
+  //   setLoading(true);
 
-    try {
-      // Baad me hum yahan real Backend API hit kren gy backend save k liye
-      // const res = await fetch('/api/admin/update-credentials', { method: 'POST', body: JSON.stringify({...}) });
+  //   try {
+  //     // Baad me hum yahan real Backend API hit kren gy backend save k liye
+  //     // const res = await fetch('/api/admin/update-credentials', { method: 'POST', body: JSON.stringify({...}) });
       
-      // Temporary Success Simulation for test
-      setTimeout(() => {
-        setStatus({ type: 'success', message: 'Portal credentials updated successfully in real-time!' });
-        setCurrentPassword('');
-        setNewPassword('');
-        setConfirmPassword('');
-        setLoading(false);
-      }, 1000);
+  //     // Temporary Success Simulation for test
+  //     setTimeout(() => {
+  //       setStatus({ type: 'success', message: 'Portal credentials updated successfully in real-time!' });
+  //       setCurrentPassword('');
+  //       setNewPassword('');
+  //       setConfirmPassword('');
+  //       setLoading(false);
+  //     }, 1000);
 
-    } catch (err) {
-      setStatus({ type: 'error', message: 'Something went wrong. Please try again.' });
-      setLoading(false);
-    }
-  };
+  //   } catch (err) {
+  //     setStatus({ type: 'error', message: 'Something went wrong. Please try again.' });
+  //     setLoading(false);
+  //   }
+  // };
 
 // app/i/t/s/a/d/m/i/n/admin/settings/page.jsx k andar handleUpdateSettings function ko is se replace karein:
-// const handleUpdateSettings = async (e) => {
-//   e.preventDefault();
-//   setStatus({ type: '', message: '' });
+const handleUpdateSettings = async (e) => {
+  e.preventDefault();
+  setStatus({ type: '', message: '' });
 
-//   if (newPassword !== confirmPassword) {
-//     setStatus({ type: 'error', message: 'New password and confirm password do not match!' });
-//     return;
-//   }
+  if (newPassword !== confirmPassword) {
+    setStatus({ type: 'error', message: 'New password and confirm password do not match!' });
+    return;
+  }
 
-//   setLoading(true);
+  setLoading(true);
 
-//   try {
-//     const response = await fetch('http://localhost:5000/api/admin/update', {
-//       method: 'POST',
-//       headers: { 'Content-Type': 'application/json' },
-//       body: JSON.stringify({
-//         currentUsername: "stowave_admin", // Baad me isay auth state se recover kr skty hain
-//         newUsername: username,
-//         currentPassword: currentPassword,
-//         newPassword: newPassword
-//       })
-//     });
+  try {
+    const response = await fetch('http://localhost:5000/api/admin/update', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        currentUsername: "stowave_admin", // Baad me isay auth state se recover kr skty hain
+        newUsername: username,
+        currentPassword: currentPassword,
+        newPassword: newPassword
+      })
+    });
 
-//     const data = await response.json();
+    const data = await response.json();
 
-//     if (data.success) {
-//       setStatus({ type: 'success', message: 'Portal credentials updated in database in real-time!' });
-//       setCurrentPassword('');
-//       setNewPassword('');
-//       setConfirmPassword('');
-//     } else {
-//       setStatus({ type: 'error', message: data.message || 'Failed to update credentials.' });
-//     }
-//   } catch (err) {
-//     setStatus({ type: 'error', message: 'Failed to communicate with database server.' });
-//   } finally {
-//     setLoading(false);
-//   }
-// };
+    if (data.success) {
+      setStatus({ type: 'success', message: 'Portal credentials updated in database in real-time!' });
+      setCurrentPassword('');
+      setNewPassword('');
+      setConfirmPassword('');
+    } else {
+      setStatus({ type: 'error', message: data.message || 'Failed to update credentials.' });
+    }
+  } catch (err) {
+    setStatus({ type: 'error', message: 'Failed to communicate with database server.' });
+  } finally {
+    setLoading(false);
+  }
+};
 
 return (
     <div className="max-w-4xl mx-auto space-y-8 animate-fade-in">
@@ -192,4 +192,5 @@ return (
       </div>
     </div>
   );
+  }
 }

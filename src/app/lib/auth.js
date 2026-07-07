@@ -1,32 +1,20 @@
-"use client";
-
-const AUTH_KEY = "auth_user";
-
-export function saveUser(user) {
-  try {
-    localStorage.setItem(AUTH_KEY, JSON.stringify(user));
-    // Let other components (e.g. navbar) in the same tab know auth changed
-    window.dispatchEvent(new Event("auth-changed"));
-  } catch (err) {
-    console.error("Could not save user to localStorage:", err);
+// Dynamic helper to save verified session to browser memory
+export const saveUser = (user, token) => {
+  if (typeof window !== 'undefined') {
+    localStorage.setItem("stowave_user", JSON.stringify(user));
+    if (token) {
+      localStorage.setItem("stowave_user_token", token);
+    }
+    // Alert the globally mounted header navbar component instantly
+    window.dispatchEvent(new Event("auth-change"));
   }
-}
+};
 
-export function getUser() {
-  try {
-    const raw = localStorage.getItem(AUTH_KEY);
-    return raw ? JSON.parse(raw) : null;
-  } catch (err) {
-    console.error("Could not read user from localStorage:", err);
-    return null;
+// Pure dynamic helper to safely delete session on logout actions
+export const logoutUser = () => {
+  if (typeof window !== 'undefined') {
+    localStorage.removeItem("stowave_user");
+    localStorage.removeItem("stowave_user_token");
+    window.dispatchEvent(new Event("auth-change"));
   }
-}
-
-export function clearUser() {
-  try {
-    localStorage.removeItem(AUTH_KEY);
-    window.dispatchEvent(new Event("auth-changed"));
-  } catch (err) {
-    console.error("Could not clear user from localStorage:", err);
-  }
-}
+};

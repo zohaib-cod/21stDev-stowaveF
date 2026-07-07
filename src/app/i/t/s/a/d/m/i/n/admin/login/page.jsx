@@ -10,42 +10,42 @@ export default function AdminLogin() {
   
   const basePath = "/i/t/s/a/d/m/i/n/admin";
 
-  const handleLogin = (e) => {
-    e.preventDefault();
+  // const handleLogin = (e) => {
+  //   e.preventDefault();
     
     // Stowave credentials
-    if (username === "stowave_admin" && password === "stowave_secure_2026") {
-      document.cookie = "stowave_admin_session=true; path=/; max-age=86400"; // 24 Hours lock open
-      router.push(basePath); // Redirect to main dashboard straight
-    } else {
-      setError('Invalid username or password!');
-    }
-  };
+  //   if (username === "stowave_admin" && password === "stowave_secure_2026") {
+  //     document.cookie = "stowave_admin_session=true; path=/; max-age=86400"; // 24 Hours lock open
+  //     router.push(basePath); // Redirect to main dashboard straight
+  //   } else {
+  //     setError('Invalid username or password!');
+  //   }
+  // };
 // app/i/t/s/a/d/m/i/n/admin/login/page.jsx k andar handleLogin function ko is se replace karein:
-// const handleLogin = async (e) => {
-//   e.preventDefault();
-//   setError('');
+const handleLogin = async (e) => {
+  e.preventDefault();
+  setError('');
   
-//   try {
-//     const response = await fetch('http://localhost:5000/api/admin/login', {
-//       method: 'POST',
-//       headers: { 'Content-Type': 'application/json' },
-//       body: JSON.stringify({ username, password })
-//     });
+  try {
+    const response = await fetch('http://localhost:5000/api/admin/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password })
+    });
 
-//     const data = await response.json();
+    const data = await response.json();
 
-//     if (data.success) {
-//       // Create session code lock open
-//       document.cookie = "stowave_admin_session=true; path=/; max-age=86400"; 
-//       router.push(basePath);
-//     } else {
-//       setError(data.message || 'Invalid username or password!');
-//     }
-//   } catch (err) {
-//     setError('Cannot connect to backend server. Ensure node server.js is running!');
-//   }
-// };
+    if (data.success) {
+      // Create session code lock open
+      document.cookie = "stowave_admin_session=true; path=/; max-age=86400"; 
+      router.push(basePath);
+    } else {
+      setError(data.message || 'Invalid username or password!');
+    }
+  } catch (err) {
+    setError('Cannot connect to backend server. Ensure node server.js is running!');
+  }
+};
 
 
   return (
