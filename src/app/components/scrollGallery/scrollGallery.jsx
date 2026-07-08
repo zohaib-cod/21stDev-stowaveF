@@ -210,7 +210,7 @@ export const RadialScrollGallery = forwardRef(
               'linear-gradient(to top, transparent 0%, black 40%, black 100%)',
           }}
         >
-          <ul
+          {/* <ul
             ref={containerRef}
             className={`
               absolute left-1/2 -translate-x-1/2 will-change-transform m-0 p-0 list-none
@@ -224,7 +224,25 @@ export const RadialScrollGallery = forwardRef(
               height: circleDiameter,
               bottom: -(circleDiameter * hiddenDecimal),
             }}
-          >
+          > */}
+          <ul
+  ref={containerRef}
+  className={`
+    absolute left-1/2 -translate-x-1/2 will-change-transform m-0 p-0 list-none
+    transition-opacity duration-500 ease-out
+    ${disabled ? 'opacity-50 pointer-events-none grayscale' : ''}
+    ${isMounted ? 'opacity-100' : 'opacity-0'}
+  `}
+  dir={direction}
+  // 🟢 Yeh line hydration error ko suppress kar degi
+  suppressHydrationWarning={true} 
+  style={{
+    width: circleDiameter,
+    height: circleDiameter,
+    bottom: -(circleDiameter * hiddenDecimal),
+  }}
+>
+
             {childrenNodes.map((child, index) => {
               const angle = (index / childrenCount) * 2 * Math.PI;
               let x = currentRadius * Math.cos(angle);
