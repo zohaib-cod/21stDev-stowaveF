@@ -52,12 +52,64 @@
 //   const [comments, setComments] = React.useState([]);
 //   const [commentText, setCommentText] = React.useState("");
 //   const [showLoginPopup, setShowLoginPopup] = React.useState(false);
+//   // 🟢 Comment box ka logged-in status ab state mein rakhte hain taake login/logout
+//   // hone par (isi tab mein bhi) turant refresh ho jaye, sirf function call par depend na ho
+//   const [loggedIn, setLoggedIn] = React.useState(false);
+
+//   // 🟢 Countdown timer state (sale kitni der mein khatam hogi)
+//   const [timeLeft, setTimeLeft] = React.useState(null); // { days, hours, minutes, seconds } | "expired" | null
 
 //   // Load this product's comments whenever the product changes
 //   React.useEffect(() => {
 //     if (product) {
 //       setComments(getCommentsForProduct(product.slug));
 //     }
+//   }, [product]);
+
+//   // 🟢 Login status check karo mount par, aur "auth-change" event par bhi (login/logout
+//   // kahin bhi ho, ye page turant update ho jayega)
+//   React.useEffect(() => {
+//     setLoggedIn(isLoggedIn());
+
+//     const syncAuth = () => setLoggedIn(isLoggedIn());
+//     window.addEventListener("auth-change", syncAuth);
+//     window.addEventListener("storage", syncAuth);
+//     return () => {
+//       window.removeEventListener("auth-change", syncAuth);
+//       window.removeEventListener("storage", syncAuth);
+//     };
+//   }, []);
+
+//   // 🟢 Har second countdown ko update karne wala effect
+//   React.useEffect(() => {
+//     if (!product || !product.saleEndTime) {
+//       setTimeLeft(null);
+//       return;
+//     }
+
+//     const endTime = new Date(product.saleEndTime).getTime();
+
+//     const tick = () => {
+//       const now = new Date().getTime();
+//       const diff = endTime - now;
+
+//       if (diff <= 0) {
+//         setTimeLeft("expired");
+//         return;
+//       }
+
+//       const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+//       const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+//       const minutes = Math.floor((diff / (1000 * 60)) % 60);
+//       const seconds = Math.floor((diff / 1000) % 60);
+
+//       setTimeLeft({ days, hours, minutes, seconds });
+//     };
+
+//     tick(); // turant ek dafa chala do, phir har second
+//     const interval = setInterval(tick, 1000);
+
+//     return () => clearInterval(interval);
 //   }, [product]);
 
 //   // 🟢 Jab tak product dhoonda ja raha hai (static + localStorage check)
@@ -97,8 +149,23 @@
 //     typeof window !== "undefined" ? window.location.origin : ""
 //   }/products/${product.slug}`;
 
+//   const isSoldOut = !!product.soldOut; // 🟢 Sold out check
+
+//   // 🟢 Sale sirf tab "expired" maani jayegi jab saleEndTime set ho AUR wo waqt guzar chuka ho.
+//   // Agar saleEndTime hai hi nahi (koi countdown lagaya hi nahi gaya), to ye hamesha false rahega
+//   // aur price/offer badge hamesha normal (jo bhi admin ne set kiya) dikhte rahenge.
+//   const isSaleExpired = !!product.saleEndTime && timeLeft === "expired";
+
+//   // 🟢 Sale khatam hone ke baad price wapis original price par chala jaye (agar original price set hai)
+//   const effectivePrice =
+//     isSaleExpired && product.originalPrice ? product.originalPrice : product.price;
+//   // Sale khatam ho chuki ho to ab strike-through original price aur offer badge dikhane ki zarurat nahi
+//   const showOriginalPriceStrike = !isSaleExpired && !!product.originalPrice;
+//   const showOfferBadge = !isSaleExpired && !!product.offerText;
+
 //   // 🟢 Navigation stop karke pop-up show karne ka logic
 //   const handleAddToBag = () => {
+//     if (isSoldOut) return; // sold out product bag mein nahi jayega
 //     addToBag(product, qty);
 //     setShowPopup(true);
 
@@ -109,6 +176,7 @@
 //   };
 
 //   const handleBuyNow = () => {
+//     if (isSoldOut) return; // sold out product buy nahi ho sakta
 //     setBuyNowItem(product, qty);
 //     router.push("/checkout");
 //   };
@@ -118,7 +186,7 @@
 //       try {
 //         await navigator.share({
 //           title: product.name,
-//           text: `${product.name} — PKR ${product.price}`,
+//           text: `${product.name} — PKR ${effectivePrice}`,
 //           url: shareUrl,
 //         });
 //       } catch {
@@ -132,7 +200,7 @@
 //   };
 
 //   const whatsappMessage = encodeURIComponent(
-//     `Assalam o Alaikum, mujhe "${product.name}" (PKR ${product.price}) k baare mein maloomat chahiye.\n${shareUrl}`
+//     `Assalam o Alaikum, mujhe "${product.name}" (PKR ${effectivePrice}) k baare mein maloomat chahiye.\n${shareUrl}`
 //   );
 
 //   // 🟢 Gallery handlers
@@ -161,7 +229,7 @@
 //   const handleCommentSubmit = (e) => {
 //     e.preventDefault();
 
-//     if (!isLoggedIn()) {
+//     if (!loggedIn) {
 //       setShowLoginPopup(true);
 //       return;
 //     }
@@ -179,10 +247,13 @@
 //   };
 
 //   const handleCommentBoxFocus = () => {
-//     if (!isLoggedIn()) {
+//     if (!loggedIn) {
 //       setShowLoginPopup(true);
 //     }
 //   };
+
+//   // 🟢 Countdown ke digits ko hamesha 2 digit mein dikhane ka helper (e.g. 05)
+//   const pad = (num) => String(num).padStart(2, "0");
 
 //   return (
 //     <div className="relative min-h-screen bg-zinc-50 dark:bg-zinc-950 py-24 px-4 sm:px-6 lg:px-8">
@@ -224,10 +295,10 @@
 //               >
 //                 Cancel
 //               </button>
-//               <button
-//                 onClick={() => router.push("/login")}
-//                 className="flex-1 py-2.5 rounded-full bg-zinc-900 dark:bg-zinc-50 text-zinc-50 dark:text-zinc-900 font-semibold"
-//               >
+// <button
+//   onClick={() => router.push("/signIn")}
+//   className="flex-1 py-2.5 rounded-full bg-zinc-900 dark:bg-zinc-50 text-zinc-50 dark:text-zinc-900 font-semibold"
+// >
 //                 Login
 //               </button>
 //             </div>
@@ -289,7 +360,7 @@
 //         {/* Image gallery */}
 //         <div>
 //           <div
-//             className="rounded-xl overflow-hidden bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 cursor-zoom-in"
+//             className="relative rounded-xl overflow-hidden bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 cursor-zoom-in"
 //             onClick={() => openLightbox(activeImage)}
 //           >
 //             <img
@@ -297,6 +368,15 @@
 //               alt={product.name}
 //               className="w-full h-full object-cover aspect-square"
 //             />
+
+//             {/* 🟢 Sold Out overlay on main image */}
+//             {isSoldOut && (
+//               <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+//                 <span className="text-white text-xl sm:text-2xl font-extrabold uppercase tracking-widest border-2 border-white px-6 py-2 rotate-[-8deg]">
+//                   Sold Out
+//                 </span>
+//               </div>
+//             )}
 //           </div>
 
 //           {images.length > 1 && (
@@ -324,11 +404,21 @@
 
 //         {/* Details */}
 //         <div>
-//           {product.offerText && (
-//             <span className="inline-block bg-zinc-900 dark:bg-zinc-50 text-zinc-50 dark:text-zinc-900 text-xs font-semibold px-3 py-1 rounded-full mb-3">
-//               {product.offerText}
-//             </span>
-//           )}
+//           <div className="flex items-center gap-2 mb-3 flex-wrap">
+//             {/* 🟢 Offer badge sirf tab dikhega jab sale expire nahi hui (ya countdown laga hi nahi) */}
+//             {showOfferBadge && (
+//               <span className="inline-block bg-zinc-900 dark:bg-zinc-50 text-zinc-50 dark:text-zinc-900 text-xs font-semibold px-3 py-1 rounded-full">
+//                 {product.offerText}
+//               </span>
+//             )}
+//             {/* 🟢 Sold Out badge next to offer tag */}
+//             {isSoldOut && (
+//               <span className="inline-block bg-red-600 text-white text-xs font-semibold px-3 py-1 rounded-full">
+//                 Sold Out
+//               </span>
+//             )}
+//           </div>
+
 //           <h1 className="text-2xl sm:text-3xl font-bold text-zinc-900 dark:text-zinc-50">
 //             {product.name}
 //           </h1>
@@ -337,15 +427,59 @@
 //           </p>
 
 //           <div className="flex items-center gap-3 mt-4">
+//             {/* 🟢 Sale khatam ho chuki ho to yahan original price show hoga (agar set hai), warna normal price */}
 //             <span className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">
-//               PKR {product.price}
+//               PKR {effectivePrice}
 //             </span>
-//             {product.originalPrice && (
+//             {/* 🟢 Strike-through wali purani price sirf tab dikhegi jab sale active ho */}
+//             {showOriginalPriceStrike && (
 //               <span className="text-base text-zinc-400 line-through">
 //                 PKR {product.originalPrice}
 //               </span>
 //             )}
 //           </div>
+
+//           {/* 🟢 Live Countdown Timer - sirf tab dikhega jab saleEndTime set ho aur abhi khatam na hui ho */}
+//           {timeLeft && timeLeft !== "expired" && (
+//             <div className="mt-4 inline-flex flex-col gap-2 rounded-xl border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-950/30 px-4 py-3">
+//               <span className="text-xs font-semibold text-red-600 dark:text-red-400 uppercase tracking-wider">
+//                 ⏳ Sale khatam hone mein
+//               </span>
+//               <div className="flex items-center gap-2">
+//                 {timeLeft.days > 0 && (
+//                   <>
+//                     <div className="flex flex-col items-center">
+//                       <span className="text-lg font-bold text-zinc-900 dark:text-zinc-50 tabular-nums">
+//                         {pad(timeLeft.days)}
+//                       </span>
+//                       <span className="text-[9px] text-zinc-500 dark:text-zinc-400 uppercase">Days</span>
+//                     </div>
+//                     <span className="text-lg font-bold text-zinc-400">:</span>
+//                   </>
+//                 )}
+//                 <div className="flex flex-col items-center">
+//                   <span className="text-lg font-bold text-zinc-900 dark:text-zinc-50 tabular-nums">
+//                     {pad(timeLeft.hours)}
+//                   </span>
+//                   <span className="text-[9px] text-zinc-500 dark:text-zinc-400 uppercase">Hrs</span>
+//                 </div>
+//                 <span className="text-lg font-bold text-zinc-400">:</span>
+//                 <div className="flex flex-col items-center">
+//                   <span className="text-lg font-bold text-zinc-900 dark:text-zinc-50 tabular-nums">
+//                     {pad(timeLeft.minutes)}
+//                   </span>
+//                   <span className="text-[9px] text-zinc-500 dark:text-zinc-400 uppercase">Min</span>
+//                 </div>
+//                 <span className="text-lg font-bold text-zinc-400">:</span>
+//                 <div className="flex flex-col items-center">
+//                   <span className="text-lg font-bold text-zinc-900 dark:text-zinc-50 tabular-nums">
+//                     {pad(timeLeft.seconds)}
+//                   </span>
+//                   <span className="text-[9px] text-zinc-500 dark:text-zinc-400 uppercase">Sec</span>
+//                 </div>
+//               </div>
+//             </div>
+//           )}
 
 //           <p className="text-zinc-600 dark:text-zinc-300 mt-4 leading-relaxed">
 //             {product.description}
@@ -359,7 +493,8 @@
 //             <div className="flex items-center border border-zinc-300 dark:border-zinc-700 rounded-full overflow-hidden">
 //               <button
 //                 onClick={() => setQty((q) => Math.max(1, q - 1))}
-//                 className="w-9 h-9 flex items-center justify-center text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+//                 disabled={isSoldOut}
+//                 className="w-9 h-9 flex items-center justify-center text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 disabled:opacity-40"
 //               >
 //                 −
 //               </button>
@@ -368,7 +503,8 @@
 //               </span>
 //               <button
 //                 onClick={() => setQty((q) => q + 1)}
-//                 className="w-9 h-9 flex items-center justify-center text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+//                 disabled={isSoldOut}
+//                 className="w-9 h-9 flex items-center justify-center text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 disabled:opacity-40"
 //               >
 //                 +
 //               </button>
@@ -379,15 +515,17 @@
 //           <div className="grid grid-cols-2 gap-3 mt-6">
 //             <button
 //               onClick={handleAddToBag}
-//               className="col-span-1 py-3 rounded-full border-2 border-zinc-900 dark:border-zinc-50 text-zinc-900 dark:text-zinc-50 font-semibold hover:bg-zinc-900 hover:text-zinc-50 dark:hover:bg-zinc-50 dark:hover:text-zinc-900 transition-colors"
+//               disabled={isSoldOut}
+//               className="col-span-1 py-3 rounded-full border-2 border-zinc-900 dark:border-zinc-50 text-zinc-900 dark:text-zinc-50 font-semibold hover:bg-zinc-900 hover:text-zinc-50 dark:hover:bg-zinc-50 dark:hover:text-zinc-900 transition-colors disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-zinc-900 dark:disabled:hover:text-zinc-50"
 //             >
-//               Add to Bag
+//               {isSoldOut ? "Sold Out" : "Add to Bag"}
 //             </button>
 //             <button
 //               onClick={handleBuyNow}
-//               className="col-span-1 py-3 rounded-full bg-zinc-900 dark:bg-zinc-50 text-zinc-50 dark:text-zinc-900 font-semibold hover:opacity-90 transition-opacity"
+//               disabled={isSoldOut}
+//               className="col-span-1 py-3 rounded-full bg-zinc-900 dark:bg-zinc-50 text-zinc-50 dark:text-zinc-900 font-semibold hover:opacity-90 transition-opacity disabled:opacity-40 disabled:cursor-not-allowed"
 //             >
-//               Buy Now
+//               {isSoldOut ? "Sold Out" : "Buy Now"}
 //             </button>
 //           </div>
 
@@ -516,54 +654,58 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
 "use client";
 
 import * as React from "react";
 import { useRouter, useParams } from "next/navigation";
-import { getProductBySlug } from "../../lib/products";
 import { addToBag, setBuyNowItem } from "../../lib/cart";
 import { isLoggedIn, getCurrentUser } from "../../lib/auth";
 import { getCommentsForProduct, addCommentToProduct } from "../../lib/comments";
 
 const WHATSAPP_NUMBER = "923290010909"; // 03290010909 international format
 
+// 🟢 Backend server ka base URL — production mein isay env variable se lena behtar hai
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+
+// 🟢 Agar backend product ke sath apna "sizes" array na bheje to ye default sizes use hongi
+const DEFAULT_SIZES = ["S", "M", "L", "XL"];
+
 export default function ProductDetailPage() {
   const router = useRouter();
   const params = useParams();
 
-  // 🟢 Product ko static + localStorage dono jagah se dhoondne wala state
+  // 🟢 Product ab backend API se aayega (localStorage/static hata diya)
   const [product, setProduct] = React.useState(null);
   const [loading, setLoading] = React.useState(true);
+  const [loadError, setLoadError] = React.useState("");
 
+  // 🟢 GET /api/products/slug/:slug se product fetch karo
   React.useEffect(() => {
-    // 1. Pehle static products list mein dhoondo
-    let foundProduct = getProductBySlug(params.slug);
-
-    // 2. Agar static mein nahi mila, to localStorage ke dynamic products check karo
-    if (!foundProduct && typeof window !== "undefined") {
+    const fetchProduct = async () => {
+      setLoading(true);
+      setLoadError("");
       try {
-        const stored = localStorage.getItem("store_products");
-        if (stored) {
-          const parsedStored = JSON.parse(stored);
-          foundProduct = parsedStored.find((p) => p.slug === params.slug);
-        }
-      } catch (e) {
-        console.error("Localstorage parsing error:", e);
-      }
-    }
+        const res = await fetch(`${API_BASE_URL}/api/Addproducts/slug/${params.slug}`);
+        const data = await res.json();
 
-    setProduct(foundProduct || null);
-    setLoading(false);
+        if (data.success) {
+          setProduct(data.product);
+        } else {
+          setProduct(null);
+          setLoadError(data.error || "Could not found product.");
+        }
+      } catch (err) {
+        console.error("fetchProduct error:", err);
+        setProduct(null);
+        setLoadError("Can't connect to srver. is your server live?");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (params.slug) {
+      fetchProduct();
+    }
   }, [params.slug]);
 
   const [qty, setQty] = React.useState(1);
@@ -576,10 +718,15 @@ export default function ProductDetailPage() {
   const [showLightbox, setShowLightbox] = React.useState(false);
   const [isZoomed, setIsZoomed] = React.useState(false);
 
+  // 🟢 Size selection state
+  const [selectedSize, setSelectedSize] = React.useState(null);
+  const [sizeError, setSizeError] = React.useState(false);
+
   // 🟢 Comments state
   const [comments, setComments] = React.useState([]);
   const [commentText, setCommentText] = React.useState("");
   const [showLoginPopup, setShowLoginPopup] = React.useState(false);
+  const [loggedIn, setLoggedIn] = React.useState(false);
 
   // 🟢 Countdown timer state (sale kitni der mein khatam hogi)
   const [timeLeft, setTimeLeft] = React.useState(null); // { days, hours, minutes, seconds } | "expired" | null
@@ -590,6 +737,19 @@ export default function ProductDetailPage() {
       setComments(getCommentsForProduct(product.slug));
     }
   }, [product]);
+
+  // 🟢 Login status check karo mount par, aur "auth-change" event par bhi
+  React.useEffect(() => {
+    setLoggedIn(isLoggedIn());
+
+    const syncAuth = () => setLoggedIn(isLoggedIn());
+    window.addEventListener("auth-change", syncAuth);
+    window.addEventListener("storage", syncAuth);
+    return () => {
+      window.removeEventListener("auth-change", syncAuth);
+      window.removeEventListener("storage", syncAuth);
+    };
+  }, []);
 
   // 🟢 Har second countdown ko update karne wala effect
   React.useEffect(() => {
@@ -617,13 +777,13 @@ export default function ProductDetailPage() {
       setTimeLeft({ days, hours, minutes, seconds });
     };
 
-    tick(); // turant ek dafa chala do, phir har second
+    tick();
     const interval = setInterval(tick, 1000);
 
     return () => clearInterval(interval);
   }, [product]);
 
-  // 🟢 Jab tak product dhoonda ja raha hai (static + localStorage check)
+  // 🟢 Loading state
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-zinc-50 dark:bg-zinc-950 px-4">
@@ -632,12 +792,13 @@ export default function ProductDetailPage() {
     );
   }
 
+  // 🟢 Product nahi mila ya API error
   if (!product) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-zinc-50 dark:bg-zinc-950 px-4">
         <div className="text-center">
           <p className="text-zinc-600 dark:text-zinc-400 mb-4">
-            Ye product nahi mila.
+            {loadError || "Ye product nahi mila."}
           </p>
           <button
             onClick={() => router.push("/oversized")}
@@ -656,27 +817,46 @@ export default function ProductDetailPage() {
       ? product.images
       : [product.imageUrl];
 
+  // 🟢 Sizes — backend se aayein to wahi use karo, warna default list
+  const sizes =
+    product.sizes && product.sizes.length > 0 ? product.sizes : DEFAULT_SIZES;
+
   const shareUrl = `${
     typeof window !== "undefined" ? window.location.origin : ""
   }/products/${product.slug}`;
 
-  const isSoldOut = !!product.soldOut; // 🟢 Sold out check
+  const isSoldOut = !!product.soldOut;
 
-  // 🟢 Navigation stop karke pop-up show karne ka logic
+  const isSaleExpired = !!product.saleEndTime && timeLeft === "expired";
+
+  const effectivePrice =
+    isSaleExpired && product.originalPrice ? product.originalPrice : product.price;
+  const showOriginalPriceStrike = !isSaleExpired && !!product.originalPrice;
+  const showOfferBadge = !isSaleExpired && !!product.offerText;
+
+  // 🟢 Add to Bag se pehle size select hona zaroori hai
   const handleAddToBag = () => {
-    if (isSoldOut) return; // sold out product bag mein nahi jayega
-    addToBag(product, qty);
+    if (isSoldOut) return;
+    if (!selectedSize) {
+      setSizeError(true);
+      return;
+    }
+    addToBag({ ...product, selectedSize }, qty);
     setShowPopup(true);
 
-    // 3 seconds baad khud hi pop-up hide ho jayega
     setTimeout(() => {
       setShowPopup(false);
     }, 3000);
   };
 
+  // 🟢 Buy Now se pehle bhi size select hona zaroori hai
   const handleBuyNow = () => {
-    if (isSoldOut) return; // sold out product buy nahi ho sakta
-    setBuyNowItem(product, qty);
+    if (isSoldOut) return;
+    if (!selectedSize) {
+      setSizeError(true);
+      return;
+    }
+    setBuyNowItem({ ...product, selectedSize }, qty);
     router.push("/checkout");
   };
 
@@ -685,7 +865,7 @@ export default function ProductDetailPage() {
       try {
         await navigator.share({
           title: product.name,
-          text: `${product.name} — PKR ${product.price}`,
+          text: `${product.name} — PKR ${effectivePrice}`,
           url: shareUrl,
         });
       } catch {
@@ -699,10 +879,9 @@ export default function ProductDetailPage() {
   };
 
   const whatsappMessage = encodeURIComponent(
-    `Assalam o Alaikum, mujhe "${product.name}" (PKR ${product.price}) k baare mein maloomat chahiye.\n${shareUrl}`
+    `Assalam o Alaikum, mujhe "${product.name}" (PKR ${effectivePrice}) k baare mein maloomat chahiye.\n${shareUrl}`
   );
 
-  // 🟢 Gallery handlers
   const openLightbox = (index) => {
     setActiveImage(index);
     setIsZoomed(false);
@@ -724,11 +903,10 @@ export default function ProductDetailPage() {
     setActiveImage((i) => (i === images.length - 1 ? 0 : i + 1));
   };
 
-  // 🟢 Comment handlers
   const handleCommentSubmit = (e) => {
     e.preventDefault();
 
-    if (!isLoggedIn()) {
+    if (!loggedIn) {
       setShowLoginPopup(true);
       return;
     }
@@ -746,17 +924,15 @@ export default function ProductDetailPage() {
   };
 
   const handleCommentBoxFocus = () => {
-    if (!isLoggedIn()) {
+    if (!loggedIn) {
       setShowLoginPopup(true);
     }
   };
 
-  // 🟢 Countdown ke digits ko hamesha 2 digit mein dikhane ka helper (e.g. 05)
   const pad = (num) => String(num).padStart(2, "0");
 
   return (
     <div className="relative min-h-screen bg-zinc-50 dark:bg-zinc-950 py-24 px-4 sm:px-6 lg:px-8">
-      {/* 🟢 Floating Non-Intrusive Pop-up Toast Alert */}
       {showPopup && (
         <div className="fixed bottom-5 right-5 z-50 flex items-center gap-3 bg-zinc-900 dark:bg-zinc-50 text-zinc-50 dark:text-zinc-900 px-5 py-4 rounded-xl shadow-2xl border border-zinc-800 dark:border-zinc-200 animate-in fade-in slide-in-from-bottom-4 duration-300">
           <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-500 text-white text-xs font-bold">
@@ -765,7 +941,7 @@ export default function ProductDetailPage() {
           <div>
             <p className="text-sm font-semibold">Product added to bag!</p>
             <p className="text-xs opacity-80 mt-0.5">
-              {product.name} ({qty} qty)
+              {product.name} ({qty} qty, Size: {selectedSize})
             </p>
           </div>
           <button
@@ -777,7 +953,6 @@ export default function ProductDetailPage() {
         </div>
       )}
 
-      {/* 🟢 Login required pop-up */}
       {showLoginPopup && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 px-4">
           <div className="bg-white dark:bg-zinc-900 rounded-2xl p-6 max-w-sm w-full text-center shadow-2xl">
@@ -795,7 +970,7 @@ export default function ProductDetailPage() {
                 Cancel
               </button>
               <button
-                onClick={() => router.push("/login")}
+                onClick={() => router.push("/signIn")}
                 className="flex-1 py-2.5 rounded-full bg-zinc-900 dark:bg-zinc-50 text-zinc-50 dark:text-zinc-900 font-semibold"
               >
                 Login
@@ -805,7 +980,6 @@ export default function ProductDetailPage() {
         </div>
       )}
 
-      {/* 🟢 Image lightbox / zoom modal */}
       {showLightbox && (
         <div className="fixed inset-0 z-[70] bg-black/90 flex items-center justify-center px-4">
           <button
@@ -868,7 +1042,6 @@ export default function ProductDetailPage() {
               className="w-full h-full object-cover aspect-square"
             />
 
-            {/* 🟢 Sold Out overlay on main image */}
             {isSoldOut && (
               <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
                 <span className="text-white text-xl sm:text-2xl font-extrabold uppercase tracking-widest border-2 border-white px-6 py-2 rotate-[-8deg]">
@@ -904,12 +1077,11 @@ export default function ProductDetailPage() {
         {/* Details */}
         <div>
           <div className="flex items-center gap-2 mb-3 flex-wrap">
-            {product.offerText && (
+            {showOfferBadge && (
               <span className="inline-block bg-zinc-900 dark:bg-zinc-50 text-zinc-50 dark:text-zinc-900 text-xs font-semibold px-3 py-1 rounded-full">
                 {product.offerText}
               </span>
             )}
-            {/* 🟢 Sold Out badge next to offer tag */}
             {isSoldOut && (
               <span className="inline-block bg-red-600 text-white text-xs font-semibold px-3 py-1 rounded-full">
                 Sold Out
@@ -926,16 +1098,15 @@ export default function ProductDetailPage() {
 
           <div className="flex items-center gap-3 mt-4">
             <span className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">
-              PKR {product.price}
+              PKR {effectivePrice}
             </span>
-            {product.originalPrice && (
+            {showOriginalPriceStrike && (
               <span className="text-base text-zinc-400 line-through">
                 PKR {product.originalPrice}
               </span>
             )}
           </div>
 
-          {/* 🟢 Live Countdown Timer - sirf tab dikhega jab saleEndTime set ho aur abhi khatam na hui ho */}
           {timeLeft && timeLeft !== "expired" && (
             <div className="mt-4 inline-flex flex-col gap-2 rounded-xl border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-950/30 px-4 py-3">
               <span className="text-xs font-semibold text-red-600 dark:text-red-400 uppercase tracking-wider">
@@ -980,6 +1151,38 @@ export default function ProductDetailPage() {
           <p className="text-zinc-600 dark:text-zinc-300 mt-4 leading-relaxed">
             {product.description}
           </p>
+
+          {/* 🟢 Size selector — likha hua size dikhega, select karna zaroori hai */}
+          <div className="mt-6">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-zinc-600 dark:text-zinc-400">Size</span>
+              {sizeError && (
+                <span className="text-xs text-red-500 font-medium">
+                  Pehle size select karein
+                </span>
+              )}
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {sizes.map((size) => (
+                <button
+                  key={size}
+                  type="button"
+                  onClick={() => {
+                    setSelectedSize(size);
+                    setSizeError(false);
+                  }}
+                  disabled={isSoldOut}
+                  className={`min-w-[44px] px-3 py-2 rounded-lg border text-sm font-semibold transition-colors disabled:opacity-40 disabled:cursor-not-allowed ${
+                    selectedSize === size
+                      ? "bg-zinc-900 dark:bg-zinc-50 text-zinc-50 dark:text-zinc-900 border-zinc-900 dark:border-zinc-50"
+                      : "bg-transparent text-zinc-700 dark:text-zinc-300 border-zinc-300 dark:border-zinc-700 hover:border-zinc-500"
+                  }`}
+                >
+                  {size}
+                </button>
+              ))}
+            </div>
+          </div>
 
           {/* Qty */}
           <div className="flex items-center gap-3 mt-6">
@@ -1026,7 +1229,7 @@ export default function ProductDetailPage() {
           </div>
 
           
-            <a href={`https://wa.me/${WHATSAPP_NUMBER}?text=${whatsappMessage}`}
+          <a  href={`https://wa.me/${WHATSAPP_NUMBER}?text=${whatsappMessage}`}
             target="_blank"
             rel="noopener noreferrer"
             className="mt-3 w-full flex items-center justify-center gap-2 py-3 rounded-full bg-[#25D366] text-white font-semibold hover:opacity-90 transition-opacity"
@@ -1051,7 +1254,7 @@ export default function ProductDetailPage() {
             </h4>
             <div className="flex gap-4">
               
-            <a    href="https://instagram.com"
+              <a  href="https://instagram.com"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-50 text-sm"
@@ -1059,7 +1262,7 @@ export default function ProductDetailPage() {
                 Instagram
               </a>
               
-             <a   href="https://facebook.com"
+               <a href="https://facebook.com"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-50 text-sm"
@@ -1071,7 +1274,7 @@ export default function ProductDetailPage() {
         </div>
       </div>
 
-      {/* 🟢 Comments section */}
+      {/* Comments section */}
       <div className="max-w-5xl mx-auto mt-14 pt-8 border-t border-zinc-200 dark:border-zinc-800">
         <h3 className="text-xl font-bold text-zinc-900 dark:text-zinc-50 mb-5">
           Comments ({comments.length})

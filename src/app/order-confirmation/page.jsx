@@ -55,10 +55,11 @@ export default function OrderConfirmationPage() {
           ref={receiptRef}
           className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-6 sm:p-8"
         >
-          <div className="flex items-center justify-between pb-4 mb-4 border-b border-zinc-200 dark:border-zinc-800">
-            <h2 className="text-lg font-bold text-zinc-900 dark:text-zinc-50">
-              EzzyWalk Order Receipt
-            </h2>
+          <div className="flex items-center flex flex-col justify-between pb-4 mb-4 border-b border-zinc-200 dark:border-zinc-800">
+            <h2 className="text-lg  font-bold text-zinc-900 dark:text-zinc-50">
+              Stowave Order Receipt
+            </h2> <br />
+            <h5 className="dark:text-zinc-300">Thanku for your order</h5>
             <span className="text-sm text-zinc-500">
               {new Date(order.date).toLocaleDateString()}
             </span>
