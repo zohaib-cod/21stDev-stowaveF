@@ -1,3 +1,4 @@
+// admin pannel layout
 "use client"; // usePathname hook k liye top par lagana lazmi hai
 import React from 'react';
 import { usePathname } from 'next/navigation'; // URL path check krny k liye import kiya

@@ -150,7 +150,7 @@ export default function OversizedPage() {
 
         {loading ? (
           <p className="text-sm text-zinc-400 text-center py-10">
-            Products load ho rahe hain...
+            Products is loading...
           </p>
         ) : error ? (
           <p className="text-sm text-red-500 text-center py-10">{error}</p>

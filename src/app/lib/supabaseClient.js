@@ -1,0 +1,52 @@
+// // PATH: /lib/supabaseClient.js
+// // Project root me "lib" folder banao (jahan package.json hai, us ke barabar)
+
+// import { createClient } from "@supabase/supabase-js";
+
+// const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+// const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+// if (!supabaseUrl || !supabaseAnonKey) {
+//   console.warn(
+//     "Supabase env vars missing: NEXT_PUBLIC_SUPABASE_URL / NEXT_PUBLIC_SUPABASE_ANON_KEY"
+//   );
+// }
+
+// export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+//   realtime: {
+//     params: {
+//       eventsPerSecond: 5,
+//     },
+//   },
+// });
+
+
+
+
+
+
+
+
+
+
+
+// PATH: src/lib/supabaseClient.js
+
+import { createClient } from "@supabase/supabase-js";
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+if (!supabaseUrl || !supabaseAnonKey) {
+  console.warn(
+    "Supabase env vars missing: NEXT_PUBLIC_SUPABASE_URL / NEXT_PUBLIC_SUPABASE_ANON_KEY"
+  );
+}
+
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  realtime: {
+    params: {
+      eventsPerSecond: 5,
+    },
+  },
+});
