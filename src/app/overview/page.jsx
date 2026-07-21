@@ -90,10 +90,10 @@ export default function OverviewPage() {
           </a>{" "}
           page, or reach out at{" "}
           <a
-            href="mailto:hello@stowave.com"
+            href="mailto:stowave.store@gmail.com"
             className="font-medium text-amber-700 underline underline-offset-2 hover:text-amber-800"
           >
-            hello@stowave.com
+            stowave.store@gmail.com
           </a>
           .
         </p>

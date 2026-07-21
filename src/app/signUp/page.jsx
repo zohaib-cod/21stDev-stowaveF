@@ -1,5 +1,3 @@
-// ROUTE: /signUp  (Sign Up Page)
-
 "use client";
 
 import { useState } from "react";
@@ -39,7 +37,6 @@ export default function SignUpPage() {
     setSubmitting(true);
 
     try {
-      // 🟢 FIXED: hardcoded localhost URL ki jagah production API URL use kar rahe hain
       const API_URL = process.env.NEXT_PUBLIC_API_URL;
       const res = await fetch(`${API_URL}/api/auth/signup`, {
         method: "POST",
@@ -56,18 +53,13 @@ export default function SignUpPage() {
       if (!res.ok) {
         throw new Error(data.error || "Registration pipeline crash.");
       }
-
-      // 🟢 FIXED: pehle "saveUser()" helper (lib/auth.js) use ho raha tha jiski keys Navbar
-      // (AcmeHero) ke check "stowave_user" / "stowave_user_token" se match nahi kar rahi thi.
-      // Ab direct yahin Navbar ke expected keys ke sath save kar rahe hain.
       if (data.user && data.token) {
         localStorage.setItem("stowave_user", JSON.stringify(data.user));
         localStorage.setItem("stowave_user_token", data.token);
 
-        // 🟢 FIXED: Event name "auth-change" navbar ke listener ke sath match kiya
         window.dispatchEvent(new Event("auth-change"));
 
-        router.push("/profile"); // Direct target to verify it works
+        router.push("/profile"); 
       } else {
         throw new Error("Signup response missing user or token.");
       }

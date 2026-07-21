@@ -1,10 +1,3 @@
-// NOT A ROUTE — shared component (no URL of its own).
-// Used by: app/orders/page.jsx and app/orders/trash/page.jsx
-//
-// A warning modal that requires the acting person to type their name before
-// the destructive action (move to trash / delete permanently) proceeds.
-// Only names in lib/authorizedNames.js are accepted (case-insensitive).
-
 "use client";
 
 import React, { useState } from "react";
@@ -23,7 +16,7 @@ export default function NameConfirmModal({
 }) {
   const [name, setName] = useState("");
   const [error, setError] = useState("");
-  const [step, setStep] = useState("name"); // "name" -> "final"
+  const [step, setStep] = useState("name"); 
 
   if (!open) return null;
 

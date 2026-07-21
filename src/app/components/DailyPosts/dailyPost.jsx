@@ -24,12 +24,8 @@ function getResponsiveMultiplier(width) {
   return 1.0;
 }
 
-/**
- * Returns a multiplier (0..1] that scales y-offsets and entry animation
- * distances when the viewport is too short for the ideal layout height.
- */
+
 function getHeightMultiplier(width) {
-  // Ideal layout heights (in px at 16px root) matching the CSS breakpoints
   let idealPx;
   if (width < 480) idealPx = 22 * 16;       // 352px
   else if (width < 640) idealPx = 26 * 16;  // 416px

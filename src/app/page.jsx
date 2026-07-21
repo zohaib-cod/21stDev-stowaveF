@@ -8,6 +8,7 @@ import SocialCards from './components/DailyPosts/dailyPost';
 import { RadialScrollGallery } from './components/scrollGallery/scrollGallery';
 import { HeroSection } from './components/slider/slider';
 import { Marquee } from './components/aboutUs/aboutUs2part';
+import RegularFitPage from './regularFitt/page';
 // import { ImageTrail } from './components/cursorFollowAlbum/cursorFollowAlbum';
 
 const sampleCards = [
@@ -62,18 +63,8 @@ function page() {
           <span className="!text-[11px] font-medium tracking-widest mx-10 text-neutral-800 uppercase">BUY TWO GET ONE FREE SITEWIDE</span>
           <span className="!text-[11px] font-medium tracking-widest mx-10 text-neutral-800 uppercase">LIMITED STOCK AVAILABLE SHOP THE VIBE</span>
         </Marquee>
-      {/* <ImageTrail/> */}
-{/* <div className="relative w-full h-[500px]">
-  <ImageTrail>
-    <img src="/IMG_4623.PNG" alt="trail 1" className="w-24 h-24 object-cover rounded-lg" />
-    <img src="/IMG_4632.PNG" alt="trail 2" className="w-24 h-24 object-cover rounded-lg" />
-    <img src="/IMG_4824.PNG" alt="trail 3" className="w-24 h-24 object-cover rounded-lg" />
-    <img src="/IMG_4909.PNG" alt="trail 4" className="w-24 h-24 object-cover rounded-lg" />
-    <img src="/IMG_4916.PNG" alt="trail 5" className="w-24 h-24 object-cover rounded-lg" />
-  </ImageTrail>
-</div> */}
 
-      <SweatshirtPage/>
+      <RegularFitPage/>
       <Example/>
       <Marquee pauseOnHover className="[--duration:20s] !p-0">
           <span className="!text-[11px] font-medium tracking-widest mx-10 text-neutral-800 uppercase">FREE SHIPPING ON ALL ORDERS OVER 5000</span>
@@ -93,7 +84,6 @@ function page() {
         </Marquee>
       <SweatshirtPage/>
       
-      {/* 🟢 Function-based render pattern implemented properly */}
       <RadialScrollGallery>
         {() =>
           sampleCardsScollGallery.map((card, index) => (

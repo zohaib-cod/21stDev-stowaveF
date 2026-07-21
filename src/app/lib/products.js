@@ -1,8 +1,3 @@
-// lib/products.js
-// Central product catalog. Har page (listing, product detail, bag) isi file se
-// product data leta hai taake slug/id har jaga consistent rahe.
-// Baad mein jab API bana lein, bas yahan fetch laga dena — baki UI same rahega.
-
 export const products = [
   {
     id: 1,

@@ -2,11 +2,7 @@
 
 import { useEffect, useRef, useState } from "react"
 
-/**
- * Tracks the mouse position and its movement vector (delta between frames).
- * If a containerRef is provided, position is calculated relative to that
- * container's bounding box; otherwise it's relative to the viewport.
- */
+
 export function useMouseVector(containerRef) {
   const [position, setPosition] = useState({ x: 0, y: 0 })
   const [vector, setVector] = useState({ x: 0, y: 0 })

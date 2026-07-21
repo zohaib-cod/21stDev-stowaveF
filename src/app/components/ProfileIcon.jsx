@@ -13,8 +13,7 @@ export default function ProfileIcon() {
   const [open, setOpen] = useState(false);
   const containerRef = useRef(null);
 
-  // Load current auth state on mount, and keep it in sync if it changes
-  // elsewhere (another tab/component calling saveUser/clearUser).
+ 
   useEffect(() => {
     setUser(getUser());
 
@@ -27,7 +26,6 @@ export default function ProfileIcon() {
     };
   }, []);
 
-  // Close the dropdown when clicking outside of it
   useEffect(() => {
     if (!open) return;
     const handleClickOutside = (e) => {
@@ -46,7 +44,6 @@ export default function ProfileIcon() {
     router.push("/");
   };
 
-  // Logged out: clicking the icon just navigates to sign up
   if (!user) {
     return (
       <Link
@@ -58,7 +55,6 @@ export default function ProfileIcon() {
     );
   }
 
-  // Logged in: clicking the icon opens a small dropdown
   return (
     <div className="relative hidden md:inline-flex" ref={containerRef}>
       <button

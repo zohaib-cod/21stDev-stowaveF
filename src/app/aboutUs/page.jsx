@@ -8,8 +8,6 @@ import ScrollReelTestimonials from '../components/aboutUs/aboutUs4aft-testi';
 import { TestimonialsColumn } from '../components/aboutUs/aboutEnd';
 import { ChevronRight } from 'lucide-react';
 import { SiGithub, SiX, SiYoutube, SiInstagram, SiFacebook } from '@icons-pack/react-simple-icons';
-// import { TestimonialCarousel } from '../components/aboutUs/testimonial';
-
 const reelTestimonials = [
   {
     quote: "Working with this team completely changed our infrastructure game. They delivered beyond our expectations.",

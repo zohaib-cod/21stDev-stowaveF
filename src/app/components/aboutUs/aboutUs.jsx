@@ -132,7 +132,7 @@ export default function AboutSection3() {
                 STOWAVE
               </div>
               <div className="text-gray-600 text-sm mb-8">
-                Premium Apparel | Streetwear Est. 2025
+                Premium Apparel | Streetwear Est. 2025-2026
               </div>
 
               <div className="mb-6">

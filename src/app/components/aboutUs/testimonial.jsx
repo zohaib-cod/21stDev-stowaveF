@@ -8,10 +8,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { SiGithub as Github, SiX as Twitter, SiYoutube as Youtube } from "@icons-pack/react-simple-icons";
 
-// LinkedIn's logo isn't available in lucide-react 1.x or
-// @icons-pack/react-simple-icons (Simple Icons excludes it for trademark
-// reasons), so it's defined here as a small inline SVG matching the same
-// icon-component API (size, color, className) used by the other icons.
+
 function Linkedin({ size = 24, color = "currentColor", className, ...props }) {
   return (
     <svg

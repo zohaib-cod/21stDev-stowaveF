@@ -28,7 +28,6 @@ export default function ForgotPasswordPage() {
     }
 
     setSubmitting(true);
-    // Replace with your real password-reset request
     setTimeout(() => {
       setSubmitting(false);
       console.log("Password reset requested for:", email);

@@ -1,10 +1,3 @@
-// NOT A ROUTE — helper file (no URL of its own).
-// Used by: app/orders/page.jsx and app/orders/trash/page.jsx
-//
-// Manages which orders are in the Trash, plus the date/time each one was trashed.
-// Backed by localStorage for now; swap readAll/writeAll for API calls once a
-// backend exists (see ordersTodo notes in pdfGenerator/statusStore for the pattern).
-
 const STORAGE_KEY = "stowave_order_trash_v1";
 const EVENT_NAME = "stowave-order-trash-changed";
 

@@ -1,9 +1,5 @@
 "use client";
 
-// Simple localStorage-based comments store, keyed by product slug.
-// Swap the internals of these two functions for real API calls
-// whenever you add a backend for comments.
-
 const COMMENTS_KEY = "product_comments";
 
 function getAllComments() {

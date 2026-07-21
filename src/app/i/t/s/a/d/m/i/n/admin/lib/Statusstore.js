@@ -1,10 +1,3 @@
-// NOT A ROUTE — this is a helper/logic file (no URL of its own).
-// Used by: app/orders/page.jsx and app/orders/[id]/page.jsx
-// Lightweight client-side "status store" backed by localStorage.
-// Persists order status changes across refreshes (no backend yet) and
-// notifies all mounted components in the same tab via a custom event,
-// so every place showing a status updates instantly ("real time").
-
 const STORAGE_KEY = "stowave_order_statuses_v1";
 const EVENT_NAME = "stowave-order-status-changed";
 
@@ -51,7 +44,7 @@ export function setBulkStatus(orders, newStatus, getCurrentStatus) {
   const all = readAll();
   orders.forEach((order) => {
     const current = getCurrentStatus(order.id) || order.status;
-    if (current === "pending") return; // skip pending — stays pending
+    if (current === "pending") return; 
     all[order.id] = newStatus;
   });
   writeAll(all);
@@ -66,7 +59,6 @@ export function subscribeToStatusChanges(callback) {
   if (typeof window === "undefined") return () => {};
   const handler = (e) => callback(e.detail);
   window.addEventListener(EVENT_NAME, handler);
-  // also listen for changes made in other tabs
   const storageHandler = (e) => {
     if (e.key === STORAGE_KEY) callback(null);
   };

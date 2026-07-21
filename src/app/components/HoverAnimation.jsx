@@ -5,9 +5,7 @@
 import React, { useRef, useEffect } from 'react';
 import { motion, useAnimation } from 'framer-motion';
 import * as THREE from 'three';
-// import SweatshirtPage from './sweatShirt/page';
-// Agar aapko Footer load karna ho to niche import line uncomment kar sakte hain
-// import Footer7 from './components/Footer/page';
+
 
 export default function WovenLightHero() {
   const textControls = useAnimation();
@@ -43,7 +41,6 @@ export default function WovenLightHero() {
   const headline = "Comfort by Stowave";
   
   return (
-    // 1. Parent Wrapper Container — Isko overflow-y-auto kiya taake scroll ho sake
     <div className="w-full min-h-screen bg-black dark:bg-white overflow-y-auto scroll-smooth">
       
       {/* SECTION 1: Welcome Interactive Hero Screen */}
@@ -89,7 +86,6 @@ export default function WovenLightHero() {
       </div>
 
       {/* SECTION 3: Future Sections Layout Space */}
-      {/* Jab bhi aapko koi naya feature card ya layout section daalna ho, aap direct is block ke niche likh sakte hain, wo automatic serial wise vertical position le lega */}
       <div className="relative z-20 bg-white dark:bg-zinc-950">
         {/* <SweatshirtPage /> */}
        

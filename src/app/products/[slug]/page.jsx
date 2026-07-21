@@ -2,40 +2,50 @@
 
 // import * as React from "react";
 // import { useRouter, useParams } from "next/navigation";
-// import { getProductBySlug } from "../../lib/products";
 // import { addToBag, setBuyNowItem } from "../../lib/cart";
 // import { isLoggedIn, getCurrentUser } from "../../lib/auth";
 // import { getCommentsForProduct, addCommentToProduct } from "../../lib/comments";
 
-// const WHATSAPP_NUMBER = "923290010909"; // 03290010909 international format
+// const WHATSAPP_NUMBER = "923290010909"; 
+
+// const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+
+// const DEFAULT_SIZES = ["S", "M", "L", "XL"];
 
 // export default function ProductDetailPage() {
 //   const router = useRouter();
 //   const params = useParams();
 
-//   // 🟢 Product ko static + localStorage dono jagah se dhoondne wala state
 //   const [product, setProduct] = React.useState(null);
 //   const [loading, setLoading] = React.useState(true);
+//   const [loadError, setLoadError] = React.useState("");
 
 //   React.useEffect(() => {
-//     // 1. Pehle static products list mein dhoondo
-//     let foundProduct = getProductBySlug(params.slug);
-
-//     // 2. Agar static mein nahi mila, to localStorage ke dynamic products check karo
-//     if (!foundProduct && typeof window !== "undefined") {
+//     const fetchProduct = async () => {
+//       setLoading(true);
+//       setLoadError("");
 //       try {
-//         const stored = localStorage.getItem("store_products");
-//         if (stored) {
-//           const parsedStored = JSON.parse(stored);
-//           foundProduct = parsedStored.find((p) => p.slug === params.slug);
-//         }
-//       } catch (e) {
-//         console.error("Localstorage parsing error:", e);
-//       }
-//     }
+//         const res = await fetch(`${API_BASE_URL}/api/Addproducts/slug/${params.slug}`);
+//         const data = await res.json();
 
-//     setProduct(foundProduct || null);
-//     setLoading(false);
+//         if (data.success) {
+//           setProduct(data.product);
+//         } else {
+//           setProduct(null);
+//           setLoadError(data.error || "Could not found product.");
+//         }
+//       } catch (err) {
+//         console.error("fetchProduct error:", err);
+//         setProduct(null);
+//         setLoadError("Can't connect to srver. Check your internet or reload page?");
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
+
+//     if (params.slug) {
+//       fetchProduct();
+//     }
 //   }, [params.slug]);
 
 //   const [qty, setQty] = React.useState(1);
@@ -48,12 +58,14 @@
 //   const [showLightbox, setShowLightbox] = React.useState(false);
 //   const [isZoomed, setIsZoomed] = React.useState(false);
 
+//   // 🟢 Size selection state
+//   const [selectedSize, setSelectedSize] = React.useState(null);
+//   const [sizeError, setSizeError] = React.useState(false);
+
 //   // 🟢 Comments state
 //   const [comments, setComments] = React.useState([]);
 //   const [commentText, setCommentText] = React.useState("");
 //   const [showLoginPopup, setShowLoginPopup] = React.useState(false);
-//   // 🟢 Comment box ka logged-in status ab state mein rakhte hain taake login/logout
-//   // hone par (isi tab mein bhi) turant refresh ho jaye, sirf function call par depend na ho
 //   const [loggedIn, setLoggedIn] = React.useState(false);
 
 //   // 🟢 Countdown timer state (sale kitni der mein khatam hogi)
@@ -66,8 +78,7 @@
 //     }
 //   }, [product]);
 
-//   // 🟢 Login status check karo mount par, aur "auth-change" event par bhi (login/logout
-//   // kahin bhi ho, ye page turant update ho jayega)
+//   // 🟢 Login status check karo mount par, aur "auth-change" event par bhi
 //   React.useEffect(() => {
 //     setLoggedIn(isLoggedIn());
 
@@ -106,13 +117,13 @@
 //       setTimeLeft({ days, hours, minutes, seconds });
 //     };
 
-//     tick(); // turant ek dafa chala do, phir har second
+//     tick();
 //     const interval = setInterval(tick, 1000);
 
 //     return () => clearInterval(interval);
 //   }, [product]);
 
-//   // 🟢 Jab tak product dhoonda ja raha hai (static + localStorage check)
+//   // 🟢 Loading state
 //   if (loading) {
 //     return (
 //       <div className="min-h-screen flex items-center justify-center bg-zinc-50 dark:bg-zinc-950 px-4">
@@ -126,58 +137,61 @@
 //       <div className="min-h-screen flex items-center justify-center bg-zinc-50 dark:bg-zinc-950 px-4">
 //         <div className="text-center">
 //           <p className="text-zinc-600 dark:text-zinc-400 mb-4">
-//             Ye product nahi mila.
+//             {loadError || "Can't find that product."}
 //           </p>
 //           <button
 //             onClick={() => router.push("/oversized")}
 //             className="text-zinc-900 dark:text-zinc-50 underline"
 //           >
-//             Collection par wapas jayein
+//             Return To Collection 
 //           </button>
 //         </div>
 //       </div>
 //     );
 //   }
 
-//   // Fallback to single imageUrl if product.images array isn't provided
 //   const images =
 //     product.images && product.images.length > 0
 //       ? product.images
 //       : [product.imageUrl];
 
+//   const sizes =
+//     product.sizes && product.sizes.length > 0 ? product.sizes : DEFAULT_SIZES;
+
 //   const shareUrl = `${
 //     typeof window !== "undefined" ? window.location.origin : ""
 //   }/products/${product.slug}`;
 
-//   const isSoldOut = !!product.soldOut; // 🟢 Sold out check
+//   const isSoldOut = !!product.soldOut;
 
-//   // 🟢 Sale sirf tab "expired" maani jayegi jab saleEndTime set ho AUR wo waqt guzar chuka ho.
-//   // Agar saleEndTime hai hi nahi (koi countdown lagaya hi nahi gaya), to ye hamesha false rahega
-//   // aur price/offer badge hamesha normal (jo bhi admin ne set kiya) dikhte rahenge.
 //   const isSaleExpired = !!product.saleEndTime && timeLeft === "expired";
 
-//   // 🟢 Sale khatam hone ke baad price wapis original price par chala jaye (agar original price set hai)
 //   const effectivePrice =
 //     isSaleExpired && product.originalPrice ? product.originalPrice : product.price;
-//   // Sale khatam ho chuki ho to ab strike-through original price aur offer badge dikhane ki zarurat nahi
 //   const showOriginalPriceStrike = !isSaleExpired && !!product.originalPrice;
 //   const showOfferBadge = !isSaleExpired && !!product.offerText;
 
-//   // 🟢 Navigation stop karke pop-up show karne ka logic
 //   const handleAddToBag = () => {
-//     if (isSoldOut) return; // sold out product bag mein nahi jayega
-//     addToBag(product, qty);
+//     if (isSoldOut) return;
+//     if (!selectedSize) {
+//       setSizeError(true);
+//       return;
+//     }
+//     addToBag({ ...product, selectedSize }, qty);
 //     setShowPopup(true);
 
-//     // 3 seconds baad khud hi pop-up hide ho jayega
 //     setTimeout(() => {
 //       setShowPopup(false);
 //     }, 3000);
 //   };
 
 //   const handleBuyNow = () => {
-//     if (isSoldOut) return; // sold out product buy nahi ho sakta
-//     setBuyNowItem(product, qty);
+//     if (isSoldOut) return;
+//     if (!selectedSize) {
+//       setSizeError(true);
+//       return;
+//     }
+//     setBuyNowItem({ ...product, selectedSize }, qty);
 //     router.push("/checkout");
 //   };
 
@@ -190,7 +204,6 @@
 //           url: shareUrl,
 //         });
 //       } catch {
-//         // user cancelled share sheet, kuch nahi karna
 //       }
 //     } else {
 //       await navigator.clipboard.writeText(shareUrl);
@@ -203,7 +216,6 @@
 //     `Assalam o Alaikum, mujhe "${product.name}" (PKR ${effectivePrice}) k baare mein maloomat chahiye.\n${shareUrl}`
 //   );
 
-//   // 🟢 Gallery handlers
 //   const openLightbox = (index) => {
 //     setActiveImage(index);
 //     setIsZoomed(false);
@@ -225,7 +237,6 @@
 //     setActiveImage((i) => (i === images.length - 1 ? 0 : i + 1));
 //   };
 
-//   // 🟢 Comment handlers
 //   const handleCommentSubmit = (e) => {
 //     e.preventDefault();
 
@@ -252,12 +263,10 @@
 //     }
 //   };
 
-//   // 🟢 Countdown ke digits ko hamesha 2 digit mein dikhane ka helper (e.g. 05)
 //   const pad = (num) => String(num).padStart(2, "0");
 
 //   return (
 //     <div className="relative min-h-screen bg-zinc-50 dark:bg-zinc-950 py-24 px-4 sm:px-6 lg:px-8">
-//       {/* 🟢 Floating Non-Intrusive Pop-up Toast Alert */}
 //       {showPopup && (
 //         <div className="fixed bottom-5 right-5 z-50 flex items-center gap-3 bg-zinc-900 dark:bg-zinc-50 text-zinc-50 dark:text-zinc-900 px-5 py-4 rounded-xl shadow-2xl border border-zinc-800 dark:border-zinc-200 animate-in fade-in slide-in-from-bottom-4 duration-300">
 //           <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-500 text-white text-xs font-bold">
@@ -266,7 +275,7 @@
 //           <div>
 //             <p className="text-sm font-semibold">Product added to bag!</p>
 //             <p className="text-xs opacity-80 mt-0.5">
-//               {product.name} ({qty} qty)
+//               {product.name} ({qty} qty, Size: {selectedSize})
 //             </p>
 //           </div>
 //           <button
@@ -278,15 +287,14 @@
 //         </div>
 //       )}
 
-//       {/* 🟢 Login required pop-up */}
 //       {showLoginPopup && (
 //         <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 px-4">
 //           <div className="bg-white dark:bg-zinc-900 rounded-2xl p-6 max-w-sm w-full text-center shadow-2xl">
 //             <h3 className="text-lg font-bold text-zinc-900 dark:text-zinc-50 mb-2">
-//               Login zaroori hai
+//               Login Required 
 //             </h3>
 //             <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-5">
-//               Comment karne ke liye pehle apne account mein login karein.
+//               login to add comment!
 //             </p>
 //             <div className="flex gap-3">
 //               <button
@@ -295,10 +303,10 @@
 //               >
 //                 Cancel
 //               </button>
-// <button
-//   onClick={() => router.push("/signIn")}
-//   className="flex-1 py-2.5 rounded-full bg-zinc-900 dark:bg-zinc-50 text-zinc-50 dark:text-zinc-900 font-semibold"
-// >
+//               <button
+//                 onClick={() => router.push("/signIn")}
+//                 className="flex-1 py-2.5 rounded-full bg-zinc-900 dark:bg-zinc-50 text-zinc-50 dark:text-zinc-900 font-semibold"
+//               >
 //                 Login
 //               </button>
 //             </div>
@@ -306,7 +314,6 @@
 //         </div>
 //       )}
 
-//       {/* 🟢 Image lightbox / zoom modal */}
 //       {showLightbox && (
 //         <div className="fixed inset-0 z-[70] bg-black/90 flex items-center justify-center px-4">
 //           <button
@@ -369,7 +376,6 @@
 //               className="w-full h-full object-cover aspect-square"
 //             />
 
-//             {/* 🟢 Sold Out overlay on main image */}
 //             {isSoldOut && (
 //               <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
 //                 <span className="text-white text-xl sm:text-2xl font-extrabold uppercase tracking-widest border-2 border-white px-6 py-2 rotate-[-8deg]">
@@ -405,13 +411,11 @@
 //         {/* Details */}
 //         <div>
 //           <div className="flex items-center gap-2 mb-3 flex-wrap">
-//             {/* 🟢 Offer badge sirf tab dikhega jab sale expire nahi hui (ya countdown laga hi nahi) */}
 //             {showOfferBadge && (
 //               <span className="inline-block bg-zinc-900 dark:bg-zinc-50 text-zinc-50 dark:text-zinc-900 text-xs font-semibold px-3 py-1 rounded-full">
 //                 {product.offerText}
 //               </span>
 //             )}
-//             {/* 🟢 Sold Out badge next to offer tag */}
 //             {isSoldOut && (
 //               <span className="inline-block bg-red-600 text-white text-xs font-semibold px-3 py-1 rounded-full">
 //                 Sold Out
@@ -427,11 +431,9 @@
 //           </p>
 
 //           <div className="flex items-center gap-3 mt-4">
-//             {/* 🟢 Sale khatam ho chuki ho to yahan original price show hoga (agar set hai), warna normal price */}
 //             <span className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">
 //               PKR {effectivePrice}
 //             </span>
-//             {/* 🟢 Strike-through wali purani price sirf tab dikhegi jab sale active ho */}
 //             {showOriginalPriceStrike && (
 //               <span className="text-base text-zinc-400 line-through">
 //                 PKR {product.originalPrice}
@@ -439,11 +441,10 @@
 //             )}
 //           </div>
 
-//           {/* 🟢 Live Countdown Timer - sirf tab dikhega jab saleEndTime set ho aur abhi khatam na hui ho */}
 //           {timeLeft && timeLeft !== "expired" && (
 //             <div className="mt-4 inline-flex flex-col gap-2 rounded-xl border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-950/30 px-4 py-3">
 //               <span className="text-xs font-semibold text-red-600 dark:text-red-400 uppercase tracking-wider">
-//                 ⏳ Sale khatam hone mein
+//                 ⏳ Sale will be end in 
 //               </span>
 //               <div className="flex items-center gap-2">
 //                 {timeLeft.days > 0 && (
@@ -484,6 +485,38 @@
 //           <p className="text-zinc-600 dark:text-zinc-300 mt-4 leading-relaxed">
 //             {product.description}
 //           </p>
+
+//           {/* 🟢 Size selector — likha hua size dikhega, select karna zaroori hai */}
+//           <div className="mt-6">
+//             <div className="flex items-center justify-between mb-2">
+//               <span className="text-sm text-zinc-600 dark:text-zinc-400">Size</span>
+//               {sizeError && (
+//                 <span className="text-xs text-red-500 font-medium">
+//                   Please select a size first.
+//                 </span>
+//               )}
+//             </div>
+//             <div className="flex flex-wrap gap-2">
+//               {sizes.map((size) => (
+//                 <button
+//                   key={size}
+//                   type="button"
+//                   onClick={() => {
+//                     setSelectedSize(size);
+//                     setSizeError(false);
+//                   }}
+//                   disabled={isSoldOut}
+//                   className={`min-w-[44px] px-3 py-2 rounded-lg border text-sm font-semibold transition-colors disabled:opacity-40 disabled:cursor-not-allowed ${
+//                     selectedSize === size
+//                       ? "bg-zinc-900 dark:bg-zinc-50 text-zinc-50 dark:text-zinc-900 border-zinc-900 dark:border-zinc-50"
+//                       : "bg-transparent text-zinc-700 dark:text-zinc-300 border-zinc-300 dark:border-zinc-700 hover:border-zinc-500"
+//                   }`}
+//                 >
+//                   {size}
+//                 </button>
+//               ))}
+//             </div>
+//           </div>
 
 //           {/* Qty */}
 //           <div className="flex items-center gap-3 mt-6">
@@ -530,7 +563,7 @@
 //           </div>
 
           
-//             <a href={`https://wa.me/${WHATSAPP_NUMBER}?text=${whatsappMessage}`}
+//           <a  href={`https://wa.me/${WHATSAPP_NUMBER}?text=${whatsappMessage}`}
 //             target="_blank"
 //             rel="noopener noreferrer"
 //             className="mt-3 w-full flex items-center justify-center gap-2 py-3 rounded-full bg-[#25D366] text-white font-semibold hover:opacity-90 transition-opacity"
@@ -555,7 +588,7 @@
 //             </h4>
 //             <div className="flex gap-4">
               
-//             <a    href="https://instagram.com"
+//               <a  href="https://instagram.com"
 //                 target="_blank"
 //                 rel="noopener noreferrer"
 //                 className="text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-50 text-sm"
@@ -563,7 +596,7 @@
 //                 Instagram
 //               </a>
               
-//              <a   href="https://facebook.com"
+//                <a href="https://facebook.com"
 //                 target="_blank"
 //                 rel="noopener noreferrer"
 //                 className="text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-50 text-sm"
@@ -575,7 +608,7 @@
 //         </div>
 //       </div>
 
-//       {/* 🟢 Comments section */}
+//       {/* Comments section */}
 //       <div className="max-w-5xl mx-auto mt-14 pt-8 border-t border-zinc-200 dark:border-zinc-800">
 //         <h3 className="text-xl font-bold text-zinc-900 dark:text-zinc-50 mb-5">
 //           Comments ({comments.length})
@@ -600,7 +633,7 @@
 
 //         {comments.length === 0 ? (
 //           <p className="text-sm text-zinc-500 dark:text-zinc-400">
-//             Abhi tak koi comment nahi hai. Sabse pehle comment karein!
+//             Add your first comment!
 //           </p>
 //         ) : (
 //           <div className="space-y-4">
@@ -654,6 +687,10 @@
 
 
 
+
+
+
+
 "use client";
 
 import * as React from "react";
@@ -662,42 +699,72 @@ import { addToBag, setBuyNowItem } from "../../lib/cart";
 import { isLoggedIn, getCurrentUser } from "../../lib/auth";
 import { getCommentsForProduct, addCommentToProduct } from "../../lib/comments";
 
-const WHATSAPP_NUMBER = "923290010909"; // 03290010909 international format
+const WHATSAPP_NUMBER = "923290010909"; 
 
-// 🟢 Backend server ka base URL — production mein isay env variable se lena behtar hai
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
-// 🟢 Agar backend product ke sath apna "sizes" array na bheje to ye default sizes use hongi
 const DEFAULT_SIZES = ["S", "M", "L", "XL"];
 
 export default function ProductDetailPage() {
   const router = useRouter();
   const params = useParams();
 
-  // 🟢 Product ab backend API se aayega (localStorage/static hata diya)
   const [product, setProduct] = React.useState(null);
   const [loading, setLoading] = React.useState(true);
   const [loadError, setLoadError] = React.useState("");
 
-  // 🟢 GET /api/products/slug/:slug se product fetch karo
   React.useEffect(() => {
     const fetchProduct = async () => {
       setLoading(true);
       setLoadError("");
-      try {
-        const res = await fetch(`${API_BASE_URL}/api/Addproducts/slug/${params.slug}`);
-        const data = await res.json();
+      const slugOrId = params.slug;
 
-        if (data.success) {
-          setProduct(data.product);
+      try {
+        let foundProduct = null;
+
+        // 🟢 1. First try: Check via direct slug endpoint on Addproducts
+        try {
+          const res1 = await fetch(`${API_BASE_URL}/api/Addproducts/slug/${slugOrId}`);
+          const data1 = await res1.json();
+          if (data1.success && data1.product) {
+            foundProduct = data1.product;
+          }
+        } catch (e) {
+          console.log("Direct slug fetch missed, trying fallback search...");
+        }
+
+        // 🟢 2. Second try: Search in main Addproducts list
+        if (!foundProduct) {
+          const res2 = await fetch(`${API_BASE_URL}/api/Addproducts`);
+          const data2 = await res2.json();
+          if (data2.success && data2.products) {
+            foundProduct = data2.products.find(
+              (p) => p.slug === slugOrId || p._id === slugOrId
+            );
+          }
+        }
+
+        // 🟢 3. Third try: Search in regularproducts list
+        if (!foundProduct) {
+          const res3 = await fetch(`${API_BASE_URL}/api/regularproducts`);
+          const data3 = await res3.json();
+          if (data3.success && data3.products) {
+            foundProduct = data3.products.find(
+              (p) => p.slug === slugOrId || p._id === slugOrId
+            );
+          }
+        }
+
+        if (foundProduct) {
+          setProduct(foundProduct);
         } else {
           setProduct(null);
-          setLoadError(data.error || "Could not found product.");
+          setLoadError("Could not find product.");
         }
       } catch (err) {
         console.error("fetchProduct error:", err);
         setProduct(null);
-        setLoadError("Can't connect to srver. is your server live?");
+        setLoadError("Can't connect to server. Check your internet or reload page?");
       } finally {
         setLoading(false);
       }
@@ -728,17 +795,17 @@ export default function ProductDetailPage() {
   const [showLoginPopup, setShowLoginPopup] = React.useState(false);
   const [loggedIn, setLoggedIn] = React.useState(false);
 
-  // 🟢 Countdown timer state (sale kitni der mein khatam hogi)
-  const [timeLeft, setTimeLeft] = React.useState(null); // { days, hours, minutes, seconds } | "expired" | null
+  // 🟢 Countdown timer state
+  const [timeLeft, setTimeLeft] = React.useState(null);
 
-  // Load this product's comments whenever the product changes
+  // Load comments
   React.useEffect(() => {
     if (product) {
-      setComments(getCommentsForProduct(product.slug));
+      setComments(getCommentsForProduct(product.slug || product._id));
     }
   }, [product]);
 
-  // 🟢 Login status check karo mount par, aur "auth-change" event par bhi
+  // Auth sync
   React.useEffect(() => {
     setLoggedIn(isLoggedIn());
 
@@ -751,7 +818,7 @@ export default function ProductDetailPage() {
     };
   }, []);
 
-  // 🟢 Har second countdown ko update karne wala effect
+  // Timer effect
   React.useEffect(() => {
     if (!product || !product.saleEndTime) {
       setTimeLeft(null);
@@ -783,7 +850,6 @@ export default function ProductDetailPage() {
     return () => clearInterval(interval);
   }, [product]);
 
-  // 🟢 Loading state
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-zinc-50 dark:bg-zinc-950 px-4">
@@ -792,41 +858,37 @@ export default function ProductDetailPage() {
     );
   }
 
-  // 🟢 Product nahi mila ya API error
   if (!product) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-zinc-50 dark:bg-zinc-950 px-4">
         <div className="text-center">
           <p className="text-zinc-600 dark:text-zinc-400 mb-4">
-            {loadError || "Ye product nahi mila."}
+            {loadError || "Can't find that product."}
           </p>
           <button
             onClick={() => router.push("/oversized")}
             className="text-zinc-900 dark:text-zinc-50 underline"
           >
-            Collection par wapas jayein
+            Return To Collection 
           </button>
         </div>
       </div>
     );
   }
 
-  // Fallback to single imageUrl if product.images array isn't provided
   const images =
     product.images && product.images.length > 0
       ? product.images
       : [product.imageUrl];
 
-  // 🟢 Sizes — backend se aayein to wahi use karo, warna default list
   const sizes =
     product.sizes && product.sizes.length > 0 ? product.sizes : DEFAULT_SIZES;
 
   const shareUrl = `${
     typeof window !== "undefined" ? window.location.origin : ""
-  }/products/${product.slug}`;
+  }/products/${product.slug || product._id}`;
 
   const isSoldOut = !!product.soldOut;
-
   const isSaleExpired = !!product.saleEndTime && timeLeft === "expired";
 
   const effectivePrice =
@@ -834,7 +896,6 @@ export default function ProductDetailPage() {
   const showOriginalPriceStrike = !isSaleExpired && !!product.originalPrice;
   const showOfferBadge = !isSaleExpired && !!product.offerText;
 
-  // 🟢 Add to Bag se pehle size select hona zaroori hai
   const handleAddToBag = () => {
     if (isSoldOut) return;
     if (!selectedSize) {
@@ -849,7 +910,6 @@ export default function ProductDetailPage() {
     }, 3000);
   };
 
-  // 🟢 Buy Now se pehle bhi size select hona zaroori hai
   const handleBuyNow = () => {
     if (isSoldOut) return;
     if (!selectedSize) {
@@ -869,7 +929,6 @@ export default function ProductDetailPage() {
           url: shareUrl,
         });
       } catch {
-        // user cancelled share sheet, kuch nahi karna
       }
     } else {
       await navigator.clipboard.writeText(shareUrl);
@@ -914,7 +973,7 @@ export default function ProductDetailPage() {
     if (!commentText.trim()) return;
 
     const user = getCurrentUser();
-    const newComment = addCommentToProduct(product.slug, {
+    const newComment = addCommentToProduct(product.slug || product._id, {
       text: commentText.trim(),
       userName: user?.name || user?.email || "Anonymous",
     });
@@ -957,10 +1016,10 @@ export default function ProductDetailPage() {
         <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 px-4">
           <div className="bg-white dark:bg-zinc-900 rounded-2xl p-6 max-w-sm w-full text-center shadow-2xl">
             <h3 className="text-lg font-bold text-zinc-900 dark:text-zinc-50 mb-2">
-              Login zaroori hai
+              Login Required 
             </h3>
             <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-5">
-              Comment karne ke liye pehle apne account mein login karein.
+              login to add comment!
             </p>
             <div className="flex gap-3">
               <button
@@ -1110,7 +1169,7 @@ export default function ProductDetailPage() {
           {timeLeft && timeLeft !== "expired" && (
             <div className="mt-4 inline-flex flex-col gap-2 rounded-xl border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-950/30 px-4 py-3">
               <span className="text-xs font-semibold text-red-600 dark:text-red-400 uppercase tracking-wider">
-                ⏳ Sale khatam hone mein
+                ⏳ Sale will be end in 
               </span>
               <div className="flex items-center gap-2">
                 {timeLeft.days > 0 && (
@@ -1152,13 +1211,13 @@ export default function ProductDetailPage() {
             {product.description}
           </p>
 
-          {/* 🟢 Size selector — likha hua size dikhega, select karna zaroori hai */}
+          {/* Size selector */}
           <div className="mt-6">
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm text-zinc-600 dark:text-zinc-400">Size</span>
               {sizeError && (
                 <span className="text-xs text-red-500 font-medium">
-                  Pehle size select karein
+                  Please select a size first.
                 </span>
               )}
             </div>
@@ -1215,7 +1274,7 @@ export default function ProductDetailPage() {
             <button
               onClick={handleAddToBag}
               disabled={isSoldOut}
-              className="col-span-1 py-3 rounded-full border-2 border-zinc-900 dark:border-zinc-50 text-zinc-900 dark:text-zinc-50 font-semibold hover:bg-zinc-900 hover:text-zinc-50 dark:hover:bg-zinc-50 dark:hover:text-zinc-900 transition-colors disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-zinc-900 dark:disabled:hover:text-zinc-50"
+              className="col-span-1 py-3 rounded-full border-2 border-zinc-900 dark:border-zinc-50 text-zinc-900 dark:text-zinc-50 font-semibold hover:bg-zinc-900 hover:text-zinc-50 dark:hover:bg-zinc-50 dark:hover:text-zinc-900 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
             >
               {isSoldOut ? "Sold Out" : "Add to Bag"}
             </button>
@@ -1228,8 +1287,8 @@ export default function ProductDetailPage() {
             </button>
           </div>
 
-          
-          <a  href={`https://wa.me/${WHATSAPP_NUMBER}?text=${whatsappMessage}`}
+          <a
+            href={`https://wa.me/${WHATSAPP_NUMBER}?text=${whatsappMessage}`}
             target="_blank"
             rel="noopener noreferrer"
             className="mt-3 w-full flex items-center justify-center gap-2 py-3 rounded-full bg-[#25D366] text-white font-semibold hover:opacity-90 transition-opacity"
@@ -1253,16 +1312,16 @@ export default function ProductDetailPage() {
               Connect With Us
             </h4>
             <div className="flex gap-4">
-              
-              <a  href="https://instagram.com"
+              <a
+                href="https://instagram.com"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-50 text-sm"
               >
                 Instagram
               </a>
-              
-               <a href="https://facebook.com"
+              <a
+                href="https://facebook.com"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-50 text-sm"
@@ -1299,7 +1358,7 @@ export default function ProductDetailPage() {
 
         {comments.length === 0 ? (
           <p className="text-sm text-zinc-500 dark:text-zinc-400">
-            Abhi tak koi comment nahi hai. Sabse pehle comment karein!
+            Add your first comment!
           </p>
         ) : (
           <div className="space-y-4">

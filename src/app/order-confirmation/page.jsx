@@ -1,6 +1,3 @@
-// Route: /order-confirmation
-// Note: is page ko kaam karnay k liye ye packages install karein:
-//   npm install jspdf html2canvas
 "use client";
 
 import * as React from "react";

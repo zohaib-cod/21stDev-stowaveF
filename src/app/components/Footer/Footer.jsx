@@ -59,7 +59,6 @@ export const Footer7 = ({
   legalLinks = defaultLegalLinks,
 }) => {
   return (
-    // Upar ki space ko py-32 se pt-32 kar diya aur bottom ko pb-0 kar ke bilkul chipka diya hai
     <section className="pt-16 pb-4 w-full bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-50 border-t border-zinc-200 dark:border-zinc-800">
       <div className="container mx-auto px-4">
         <div className="flex w-full flex-col justify-between gap-10 lg:flex-row lg:items-start lg:text-left">
@@ -112,7 +111,6 @@ export const Footer7 = ({
         </div>
         
         {/* Copyright and Bottom Legal Links */}
-        {/* Is section ki padding-bottom aur margin-bottom ko 0 kar diya hai taake mazeed space na bane */}
         <div className="mt-8 flex flex-col justify-between gap-4 border-t border-zinc-200 dark:border-zinc-800 pt-8 pb-0 mb-0 text-xs font-medium text-zinc-400 dark:text-zinc-500 md:flex-row md:items-center md:text-left">
           <p className="order-2 lg:order-1">{copyright}</p>
           <ul className="order-1 flex flex-col gap-2 md:order-2 md:flex-row">

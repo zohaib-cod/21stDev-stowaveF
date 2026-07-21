@@ -4,10 +4,8 @@ import * as React from "react";
 import { motion } from "framer-motion";
 import { HeroSection } from "../components/slider/slider";
 
-// Local cn helper: Agar project mein shadcn ki utils file na chal rahi ho tab bhi error nahi aega
 const cn = (...classes) => classes.filter(Boolean).join(" ");
 
-// --- 1. ProductCard Component (Pure JavaScript Version) ---
 const ProductCard = React.forwardRef((
   {
     className,
@@ -23,7 +21,6 @@ const ProductCard = React.forwardRef((
   },
   ref
 ) => {
-  // Price formatter for consistent currency display
   const formatPrice = (amount) => {
     return new Intl.NumberFormat("en-IN", {
       style: "currency",
@@ -87,9 +84,7 @@ const ProductCard = React.forwardRef((
 
 ProductCard.displayName = "ProductCard";
 
-// --- 2. Main Page Component (Jo screen par dikhega) ---
 export default function SweatshirtPage() {
-  // Dummy products data loop chalane ke liye
   const sweatShirtsData = [
     {
       id: 1,
@@ -153,11 +148,6 @@ export default function SweatshirtPage() {
           ))}
         </div>
       </div>
-      {/* <HeroSection
-        title="Crafted For Every Story"
-        subtitle="Discover pieces designed to move with you, wherever the day takes you."
-        images={heroSliderImages}
-      /> */}
     </div>
   );
 }

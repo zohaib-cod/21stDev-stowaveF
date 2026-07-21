@@ -10,7 +10,6 @@ export default function ChatAssistant() {
   // Auto-scroll ke liye ref layer
   const messagesEndRef = useRef(null);
 
-  // 1. Cache History: Page load hote hi local storage se purani chat uthayein
   useEffect(() => {
     const savedChats = localStorage.getItem('ecom_chat_history');
     if (savedChats) {
@@ -18,14 +17,12 @@ export default function ChatAssistant() {
     }
   }, []);
 
-  // 2. Auto Scroll to Bottom: Jab bhi naya message aaye ya loading state change ho
   useEffect(() => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, [messages, loading]);
 
-  // History ko local storage me save karne ka function
   const saveToCache = (updatedMessages) => {
     setMessages(updatedMessages);
     localStorage.setItem('ecom_chat_history', JSON.stringify(updatedMessages));
@@ -42,14 +39,13 @@ export default function ChatAssistant() {
     setLoading(true);
 
     try {
-      // APKA EXPRESS BACKEND SERVER ENDPOINT (LIVE PRODUCTION URL FROM .env)
       const API_URL = process.env.NEXT_PUBLIC_API_URL;
       const res = await fetch(`${API_URL}/api/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
           message: input,
-          history: messages // Purani history backend ko ja rahi hai context memory k liye
+          history: messages 
         }),
       });
       
@@ -68,7 +64,6 @@ export default function ChatAssistant() {
     }
   };
 
-  // Jab chat band ho, to chota floating button dikhayein (icon + label)
   if (!isOpen) {
     return (
       <button

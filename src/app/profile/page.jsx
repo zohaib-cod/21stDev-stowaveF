@@ -1,5 +1,3 @@
-// ROUTE: /profile  (Profile Page)
-
 "use client";
 
 import { useState, useEffect } from "react";
@@ -11,9 +9,6 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // 🟢 FIXED: pehle "auth_user" check ho raha tha, jo Login/SignUp pages ke
-    // "stowave_user" / "stowave_user_token" keys se match nahi karta tha — isi wajah se
-    // login hone ke baad bhi profile khud signUp pe wapas bhej raha tha.
     const rawData = localStorage.getItem("stowave_user");
     const savedToken = localStorage.getItem("stowave_user_token");
 
@@ -36,11 +31,9 @@ export default function ProfilePage() {
   }, [router]);
 
   const handleLogout = () => {
-    // 🟢 FIXED: dono keys clear kar rahe hain jo login/signup set karte hain
     localStorage.removeItem("stowave_user");
     localStorage.removeItem("stowave_user_token");
 
-    // 🟢 FIXED: event name "auth-change" navbar ke listener ke sath match kiya (pehle "auth-changed" tha)
     window.dispatchEvent(new Event("auth-change"));
 
     router.push("/signUp");

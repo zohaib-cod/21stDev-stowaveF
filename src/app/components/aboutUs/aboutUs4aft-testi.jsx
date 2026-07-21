@@ -1,27 +1,12 @@
 "use client";
 import Link from "next/link";
 import * as React from "react";
-
-/* ----------------------------------------------------------------
- * ScrollReelTestimonials
- *
- * Counter-rotating scroll reel + per-character text rise.
- * The middle column is a real vertical list of portraits that
- * translates by one "pitch" per step; the outer columns counter-
- * rotate the opposite way. Text animates in character-by-character
- * with a stagger; the old block exits as a whole before the new
- * characters rise in sequence.
- * ---------------------------------------------------------------- */
-
-/* Geometry — middle column pitch between portrait centers:
- * 3 * (cell 121.33px + gap 8px) = 388px */
 const CELL = 121.33;
 const GAP = 8;
 const STEP = 3 * (CELL + GAP);
 
-const EXIT_MS = 240; // old text removed / new text mounted
-const SLIDE_MS = 800; // column slide duration + interaction lock
-
+const EXIT_MS = 240;
+const SLIDE_MS = 800; 
 const EASE_INOUT = "cubic-bezier(0.65,0,0.35,1)";
 
 const QUOTE_CLASSES =
@@ -36,7 +21,6 @@ function cn(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-/* Blurred placeholder cell */
 function Cell() {
   return (
     <div
@@ -47,7 +31,6 @@ function Cell() {
   );
 }
 
-/* Featured portrait tile with desaturation + gradient sheen overlays */
 function Featured({ src, alt }) {
   return (
     <div
@@ -60,12 +43,10 @@ function Featured({ src, alt }) {
         loading="lazy"
         className="absolute inset-0 h-full w-full object-cover object-[center_30%]"
       />
-      {/* desaturate via saturation blend */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 z-[2] bg-white mix-blend-saturation"
       />
-      {/* diagonal gradient sheen */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 z-[3] blur-[6px] mix-blend-overlay"
@@ -78,10 +59,7 @@ function Featured({ src, alt }) {
   );
 }
 
-/* Per-character split. Spaces live between word spans as plain text
- * nodes so natural line-wrapping is preserved. Each char rises in
- * with an inline animation-delay; while the block is exiting, the
- * char animation is removed so in-flight rises are killed. */
+
 function Chars({ text, startIndex, staggerMs }) {
   let idx = startIndex;
   const words = text.split(" ");
@@ -122,8 +100,6 @@ export function ScrollReelTestimonials({
   charStaggerMs = 6,
   className,
 }) {
-  /* Navigation state vs display state are kept separate so the
-   * exiting block and the entering block never render together. */
   const [index, setIndex] = React.useState(0);
   const [displayIndex, setDisplayIndex] = React.useState(0);
   const [exiting, setExiting] = React.useState(false);
@@ -134,8 +110,7 @@ export function ScrollReelTestimonials({
   const count = testimonials.length;
 
   React.useEffect(() => {
-    /* Enable column transitions only after first paint so the reel
-     * appears at its starting offset without a slide-in. */
+
     const raf = requestAnimationFrame(() =>
       requestAnimationFrame(() => setMounted(true))
     );
@@ -181,8 +156,7 @@ export function ScrollReelTestimonials({
     }
   };
 
-  /* Middle column: 3 leading cells, then featured + 2 cells between
-   * each testimonial, then 3 trailing cells. */
+
   const middleItems = React.useMemo(() => {
     const items = [];
     for (let i = 0; i < 3; i++) items.push({ type: "cell" });

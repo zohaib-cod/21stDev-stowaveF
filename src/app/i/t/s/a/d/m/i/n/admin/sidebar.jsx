@@ -95,9 +95,7 @@ const handleLogout = () => {
   const toggleSidebar = () => setIsOpen(!isOpen);
   const toggleCollapse = () => setIsCollapsed(!isCollapsed);
 
-//   const handleLogout = () => {
-//     alert("Logging out from Stowave Portal..."); 
-//   };
+
 
   return (
     <>
@@ -227,7 +225,7 @@ const handleLogout = () => {
               {!isCollapsed && (
                 <div className="flex flex-col min-w-0">
                   <span className="text-sm font-medium text-slate-700 truncate">Stowave Admin</span>
-                  <span className="text-xs text-slate-500 truncate">portal@stowave.com</span>
+                  <span className="text-xs text-slate-500 truncate">stowave.store@gmail.com</span>
                 </div>
               )}
             </div>

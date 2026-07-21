@@ -1,9 +1,3 @@
-// NOT A ROUTE — this is a helper/logic file (no URL of its own).
-// Used by: app/orders/page.jsx and app/orders/[id]/page.jsx
-// PDF export helpers for Stowave orders.
-// Uses jsPDF + jspdf-autotable to produce a clean, branded PDF.
-// Install with: npm install jspdf jspdf-autotable
-
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { STATUS_MAP } from "../components/data/orders";

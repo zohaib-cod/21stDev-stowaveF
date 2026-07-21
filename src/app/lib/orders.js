@@ -1,8 +1,3 @@
-// lib/orders.js
-// "Save information for next time" checkbox aur completed orders
-// filhal localStorage mein store hotay hain. API bananay k baad
-// yahan functions ko backend calls se replace kar dena.
-
 const SAVED_INFO_KEY = "saved_checkout_info";
 const ORDERS_KEY = "orders";
 const LAST_ORDER_KEY = "last_order";

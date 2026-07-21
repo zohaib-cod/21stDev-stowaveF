@@ -58,10 +58,7 @@ function useResponsiveValue(baseValue, mobileValue) {
   return value;
 }
 
-/**
- * A scroll-driven interaction that rotates items along a large, partially hidden circle.
- * The component pins itself to the viewport while the user scrolls through the rotational progress.
- */
+
 export const RadialScrollGallery = forwardRef(
   (
     {
@@ -104,8 +101,7 @@ export const RadialScrollGallery = forwardRef(
     );
     const childrenCount = childrenNodes.length;
 
-    // Measure the first child to determine layout buffers.
-    // This ensures the container is tall enough to prevent clipping as items rotate.
+    
     useEffect(() => {
       setIsMounted(true);
 
@@ -183,8 +179,7 @@ export const RadialScrollGallery = forwardRef(
 
     if (childrenCount === 0) return null;
 
-    // Calculate the total height required for the pinned container.
-    // We need (Visible Circle Height) + (Half Item Height) + (Buffer) to ensure items aren't cut off by the mask.
+    
     const scaleFactor = 1.25;
     const calculatedBuffer = childSize
       ? childSize.h * scaleFactor - childSize.h + 60
@@ -210,21 +205,7 @@ export const RadialScrollGallery = forwardRef(
               'linear-gradient(to top, transparent 0%, black 40%, black 100%)',
           }}
         >
-          {/* <ul
-            ref={containerRef}
-            className={`
-              absolute left-1/2 -translate-x-1/2 will-change-transform m-0 p-0 list-none
-              transition-opacity duration-500 ease-out
-              ${disabled ? 'opacity-50 pointer-events-none grayscale' : ''}
-              ${isMounted ? 'opacity-100' : 'opacity-0'}
-            `}
-            dir={direction}
-            style={{
-              width: circleDiameter,
-              height: circleDiameter,
-              bottom: -(circleDiameter * hiddenDecimal),
-            }}
-          > */}
+         
           <ul
   ref={containerRef}
   className={`
@@ -234,7 +215,6 @@ export const RadialScrollGallery = forwardRef(
     ${isMounted ? 'opacity-100' : 'opacity-0'}
   `}
   dir={direction}
-  // 🟢 Yeh line hydration error ko suppress kar degi
   suppressHydrationWarning={true} 
   style={{
     width: circleDiameter,
@@ -268,10 +248,7 @@ export const RadialScrollGallery = forwardRef(
                     }deg)`,
                   }}
                 >
-                  {/* 
-                    Using a generic div with role="button" instead of <button> 
-                    to allow passing interactive children (like <Link>) without creating invalid HTML nesting.
-                  */}
+                 
                   <div
                     role='button'
                     tabIndex={disabled ? -1 : 0}

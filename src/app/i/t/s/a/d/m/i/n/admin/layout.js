@@ -1,9 +1,7 @@
-// admin pannel layout
-"use client"; // usePathname hook k liye top par lagana lazmi hai
+"use client"; 
 import React from 'react';
-import { usePathname } from 'next/navigation'; // URL path check krny k liye import kiya
-import { Sidebar } from './sidebar'; // Ensure path is correct based on folder
-
+import { usePathname } from 'next/navigation'; 
+import { Sidebar } from './sidebar'; 
 export default function AdminLayout({ children }) {
   const pathname = usePathname();
 

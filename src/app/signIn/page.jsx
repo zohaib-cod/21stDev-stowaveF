@@ -1,5 +1,3 @@
-// ROUTE: /signIn  (Login Page)
-
 "use client";
 
 import { useState } from "react";
@@ -30,7 +28,6 @@ export default function LoginPage() {
     setSubmitting(true);
 
     try {
-      // ====== REAL-TIME LIVE LOGIN PIPELINE CONNECTION (PRODUCTION API URL) ======
       const API_URL = process.env.NEXT_PUBLIC_API_URL;
       const res = await fetch(`${API_URL}/api/auth/login`, {
         method: "POST",
@@ -47,15 +44,12 @@ export default function LoginPage() {
         throw new Error(data.error || "Invalid email or password execution.");
       }
 
-      // 🟢 FIXED: Navbar (AcmeHero) ke check "stowave_user" + "stowave_user_token" ke sath match kiya
       if (data.user && data.token) {
         localStorage.setItem("stowave_user", JSON.stringify(data.user));
         localStorage.setItem("stowave_user_token", data.token);
 
-        // 🟢 FIXED: Event name "auth-change" navbar ke listener ke sath match kiya (pehle "auth-changed" tha)
         window.dispatchEvent(new Event("auth-change"));
 
-        // Direct absolute safe router profile routing transition path
         router.push("/profile");
       } else {
         throw new Error("Login response missing user or token.");

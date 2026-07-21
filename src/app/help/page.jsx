@@ -38,10 +38,10 @@ export default function HelpPage() {
           </p>
         </div>
         <a
-          href="mailto:help@stowave.com"
+          href="mailto:stowave.store@gmail.com"
           className="inline-flex items-center justify-center rounded-md bg-stone-950 px-5 py-2.5 text-sm font-medium text-stone-50 transition-colors hover:bg-amber-600"
         >
-          help@stowave.com
+          stowave.store@gmail.com
         </a>
       </div>
 
@@ -64,10 +64,10 @@ export default function HelpPage() {
             <p>
               If your order hasn't shipped yet, email{" "}
               <a
-                href="mailto:help@stowave.com"
+                href="mailto:stowave.store@gmail.com"
                 className="font-medium text-amber-700 underline underline-offset-2 hover:text-amber-800"
               >
-                stowave.storet privacy@stowave.com@gmail.com
+                stowave.store@gmail.com
               </a>{" "}
               right away with your order number and we'll update it if
               possible.
